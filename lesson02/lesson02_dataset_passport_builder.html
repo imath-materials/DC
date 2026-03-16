@@ -6,50 +6,52 @@
 <title>Паспорт датасета — конструктор</title>
 <style>
   :root{
-    --bg:#f5f7fb;
+    --bg:#fcf9ff;
     --card:#ffffff;
-    --line:#d8e0ea;
-    --accent:#274c77;
-    --accent-soft:#eef4fa;
-    --text:#1f2937;
-    --muted:#5b6472;
+    --line:#eadcff;
+    --accent:#5f1ccf;
+    --accent-2:#8a4de8;
+    --accent-soft:#f8f3ff;
+    --text:#2b2b2b;
+    --muted:#6f5f8f;
   }
-  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);}
+  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);color:var(--text);}
   .wrap{max-width:1180px;margin:0 auto;padding:24px;}
   h1{margin:0 0 8px;color:var(--accent);}
   p.lead{margin:0 0 18px;color:var(--muted);}
   .grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:18px;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(39,76,119,.06);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(106,0,212,.06);}
   .section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin:4px 0 12px;}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
   input,select,textarea{
     width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;
-    padding:11px 12px;font:inherit;background:#fff;color:var(--text);
+    padding:11px 12px;font:inherit;background:#fff;color:var(--text);outline:none;
   }
   textarea{min-height:88px;resize:vertical;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent-2);box-shadow:0 0 0 4px rgba(138,77,232,.12);}
   .hint{font-size:12px;color:var(--muted);margin-top:4px;}
   .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
   button{
     border:none;background:var(--accent);color:#fff;border-radius:999px;padding:11px 16px;
     font:inherit;font-weight:600;cursor:pointer;
   }
-  button.secondary{background:#5b6472;}
-  button.light{background:#e8eef6;color:var(--accent);}
+  button.secondary{background:#7b63a8;}
+  button.light{background:#f1e8ff;color:var(--accent);}
   .passport{
     border:1px solid var(--line);border-radius:18px;overflow:hidden;background:white;
   }
   .passport-header{
-    background:linear-gradient(135deg,var(--accent),#3d6a99);
+    background:linear-gradient(135deg,var(--accent-2),var(--accent));
     color:white;padding:18px 20px;
   }
   .passport-header h2{margin:0;font-size:24px;}
   .passport-header .meta{margin-top:8px;font-size:14px;opacity:.92;}
   .passport-body{padding:18px 20px;}
-  .row{display:grid;grid-template-columns:190px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #edf1f6;}
+  .row{display:grid;grid-template-columns:190px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #f0e7ff;}
   .row:last-child{border-bottom:none;}
   .row .k{font-weight:700;color:var(--accent);}
-  .smallnote{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);font-size:14px;}
+  .smallnote{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--accent-soft);font-size:14px;}
   .mini{font-size:12px;color:var(--muted);}
   @media (max-width: 930px){
     .grid{grid-template-columns:1fr;}
