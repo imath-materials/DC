@@ -1,157 +1,239 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson 03 — До / После</title>
-  <style>
-    body { font-family: Arial, Helvetica, sans-serif; background:#faf7ff; color:#2b2b2b; margin:0; }
-    .wrap { max-width:980px; margin:0 auto; padding:24px; }
-    .hero, .card { background:#fff; border:1px solid #eadcff; border-radius:18px; box-shadow:0 4px 14px rgba(106,0,212,.06); }
-    .hero { padding:24px; margin-bottom:18px; background:linear-gradient(180deg, #fcf9ff 0%, #f7f1ff 100%); }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:16px; }
-    .card { padding:20px; }
-    h1,h2,h3 { margin-top:0; color:#2a174a; }
-    h3 { color:#5f1ccf; }
-    label { display:block; margin:10px 0 6px; font-weight:bold; }
-    input, select, textarea { width:100%; box-sizing:border-box; border:1px solid #d9c2ff; border-radius:12px; padding:10px 12px; font:inherit; }
-    textarea { min-height:90px; resize:vertical; }
-    table { width:100%; border-collapse:collapse; margin-top:10px; }
-    th, td { padding:10px; border-bottom:1px solid #eee; text-align:left; }
-    th { color:#5f1ccf; }
-    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
-    button { border:0; border-radius:12px; padding:12px 16px; cursor:pointer; font-weight:bold; }
-    .primary { background:#6a00d4; color:#fff; }
-    .secondary { background:#efe6ff; color:#4c149f; }
-    .mono { width:100%; min-height:220px; margin-top:12px; display:none; font-family: "DejaVu Sans Mono", monospace; }
-    .hint { color:#666; font-size:14px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчёт «До / После» — конструктор</title>
+<style>
+  :root{
+    --bg:#fcf9ff;
+    --card:#ffffff;
+    --line:#eadcff;
+    --accent:#5f1ccf;
+    --accent-2:#8a4de8;
+    --accent-soft:#f8f3ff;
+    --text:#2b2b2b;
+    --muted:#6f5f8f;
+  }
+  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);color:var(--text);}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px;}
+  h1{margin:0 0 8px;color:var(--accent);}
+  p.lead{margin:0 0 18px;color:var(--muted);}
+  .grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(106,0,212,.06);}
+  .section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin:4px 0 12px;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  input,select,textarea{
+    width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;
+    padding:11px 12px;font:inherit;background:#fff;color:var(--text);outline:none;
+  }
+  textarea{min-height:88px;resize:vertical;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent-2);box-shadow:0 0 0 4px rgba(138,77,232,.12);}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  button{
+    border:none;background:var(--accent);color:#fff;border-radius:999px;padding:11px 16px;
+    font:inherit;font-weight:600;cursor:pointer;
+  }
+  button.secondary{background:#7b63a8;}
+  button.light{background:#f1e8ff;color:var(--accent);}
+  .passport{
+    border:1px solid var(--line);border-radius:18px;overflow:hidden;background:white;
+  }
+  .passport-header{
+    background:linear-gradient(135deg,var(--accent-2),var(--accent));
+    color:white;padding:18px 20px;
+  }
+  .passport-header h2{margin:0;font-size:24px;}
+  .passport-header .meta{margin-top:8px;font-size:14px;opacity:.92;}
+  .passport-body{padding:18px 20px;}
+  .row{display:grid;grid-template-columns:190px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #f0e7ff;}
+  .row:last-child{border-bottom:none;}
+  .row .k{font-weight:700;color:var(--accent);}
+  .smallnote{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--accent-soft);font-size:14px;}
+  .mini{font-size:12px;color:var(--muted);}
+  @media (max-width: 930px){
+    .grid{grid-template-columns:1fr;}
+    .two{grid-template-columns:1fr;}
+    .row{grid-template-columns:1fr;}
+  }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <div style="font-size:14px;font-weight:bold;letter-spacing:.04em;text-transform:uppercase;color:#8a4de8;margin-bottom:8px;"><strong>Занятие 3</strong></div>
-      <h1>Отчёт «До / После»</h1>
-      <p>Короткий конструктор для фиксации результатов очистки данных. Его можно использовать как основу для сдачи домашнего задания или для быстрого оформления результата пары.</p>
+<div class="wrap">
+  <h1>Конструктор отчёта «До / После»</h1>
+  <p class="lead">Автономный no-code инструмент для занятия «Форматы и предобработка: очистка и фильтрация». Заполните поля, получите готовый отчёт и скопируйте его в markdown или JSON.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="section-title">Ввод данных</div>
+
+      <label for="datasetTitle">Название набора</label>
+      <input id="datasetTitle" value="Городские сервисные заявки (учебный набор)">
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="mainFormat">Основной формат</label>
+          <select id="mainFormat">
+            <option>CSV</option>
+            <option>JSON</option>
+            <option>XML</option>
+            <option>Несколько форматов</option>
+          </select>
+        </div>
+        <div>
+          <label for="cleaningMode">Режим работы</label>
+          <select id="cleaningMode">
+            <option>No-code / таблица</option>
+            <option>Python / Pandas</option>
+            <option>Смешанный режим</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="sourceFile" style="margin-top:12px;">Источник / файл</label>
+      <input id="sourceFile" value="lesson03_dirty_city_services.csv">
+
+      <label for="issues" style="margin-top:12px;">Какие проблемы были в данных</label>
+      <textarea id="issues">Пропуски, дубликаты, выбросы, непоследовательные категориальные значения.</textarea>
+
+      <label for="actions" style="margin-top:12px;">Какие действия по очистке были выполнены</label>
+      <textarea id="actions">Например: заполнение пропусков, удаление дублей, нормализация категорий, фильтрация выбросов.</textarea>
+
+      <div class="two" style="margin-top:12px;">
+        <div>
+          <label for="beforeMetrics">Ключевые метрики «до»</label>
+          <textarea id="beforeMetrics">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1</textarea>
+        </div>
+        <div>
+          <label for="afterMetrics">Ключевые метрики «после»</label>
+          <textarea id="afterMetrics">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0</textarea>
+        </div>
+      </div>
+
+      <label for="mainEffect" style="margin-top:12px;">Что стало лучше после очистки</label>
+      <textarea id="mainEffect">Набор стал более однородным, пропали дубли и аномальные значения, категории стало легче анализировать.</textarea>
+
+      <label for="remainingRisks" style="margin-top:12px;">Что ещё осталось под вопросом</label>
+      <textarea id="remainingRisks">Например: часть решений принималась эвристически; источник не гарантирует полную актуальность; часть значений могла быть восстановлена приблизительно.</textarea>
+
+      <div class="toolbar">
+        <button onclick="fillExample()">Подставить учебный пример</button>
+        <button class="secondary" onclick="copyMarkdown()">Скопировать как Markdown</button>
+        <button class="light" onclick="copyJSON()">Скопировать как JSON</button>
+      </div>
+      <div class="hint">Подсказка: в отчёте важно не просто перечислить шаги, а объяснить, почему именно такие действия вы сочли разумными.</div>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h3>1. Общая информация</h3>
-        <label for="dataset">Название датасета</label>
-        <input id="dataset" placeholder="Например: Городские сервисные заявки">
-        <label for="format">Формат данных</label>
-        <select id="format">
-          <option>CSV</option>
-          <option>JSON</option>
-          <option>XML</option>
-          <option>Другое</option>
-        </select>
-        <label for="tool">Инструмент обработки</label>
-        <input id="tool" placeholder="Например: Pandas / Google Sheets">
+    <div class="card">
+      <div class="section-title">Предпросмотр</div>
+      <div class="passport">
+        <div class="passport-header">
+          <h2 id="pv-title">Городские сервисные заявки (учебный набор)</h2>
+          <div class="meta"><span id="pv-format">CSV</span> · <span id="pv-mode">No-code / таблица</span></div>
+        </div>
+        <div class="passport-body">
+          <div class="row"><div class="k">Источник / файл</div><div id="pv-source">lesson03_dirty_city_services.csv</div></div>
+          <div class="row"><div class="k">Проблемы</div><div id="pv-issues">Пропуски, дубликаты, выбросы, непоследовательные категориальные значения.</div></div>
+          <div class="row"><div class="k">Действия</div><div id="pv-actions">Например: заполнение пропусков, удаление дублей, нормализация категорий, фильтрация выбросов.</div></div>
+          <div class="row"><div class="k">До</div><div id="pv-before">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1</div></div>
+          <div class="row"><div class="k">После</div><div id="pv-after">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0</div></div>
+          <div class="row"><div class="k">Что стало лучше</div><div id="pv-effect">Набор стал более однородным, пропали дубли и аномальные значения, категории стало легче анализировать.</div></div>
+          <div class="row"><div class="k">Что осталось под вопросом</div><div id="pv-risks">Например: часть решений принималась эвристически; источник не гарантирует полную актуальность; часть значений могла быть восстановлена приблизительно.</div></div>
+        </div>
       </div>
-
-      <div class="card">
-        <h3>2. Какие проблемы были найдены</h3>
-        <label for="issues">Опишите проблемы</label>
-        <textarea id="issues" placeholder="Пропуски, дубликаты, выбросы, непоследовательные категории..."></textarea>
-        <label for="actions">Что было сделано</label>
-        <textarea id="actions" placeholder="Заполнили пропуски, удалили полные дубликаты, нормализовали категории..."></textarea>
+      <div class="smallnote">
+        <strong>Мини-чек-лист перед сдачей:</strong>
+        <ol>
+          <li>Я могу показать состояние данных до очистки.</li>
+          <li>Я понимаю, какие проблемы были в наборе.</li>
+          <li>Я могу объяснить каждый шаг очистки.</li>
+          <li>Я вижу, как изменились метрики «до / после».</li>
+          <li>Я могу кратко сформулировать ограничения своего решения.</li>
+        </ol>
       </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;">
-      <h3>3. Метрики до и после</h3>
-      <table>
-        <tr><th>Метрика</th><th>До</th><th>После</th></tr>
-        <tr><td>Количество строк</td><td><input id="rows_before"></td><td><input id="rows_after"></td></tr>
-        <tr><td>Пропуски</td><td><input id="miss_before"></td><td><input id="miss_after"></td></tr>
-        <tr><td>Дубликаты</td><td><input id="dup_before"></td><td><input id="dup_after"></td></tr>
-        <tr><td>Выбросы / подозрительные значения</td><td><input id="out_before"></td><td><input id="out_after"></td></tr>
-      </table>
-      <label for="notes">Короткий вывод</label>
-      <textarea id="notes" placeholder="Что изменилось сильнее всего после очистки? Какие решения были спорными?"></textarea>
-
-      <div class="actions">
-        <button class="primary" onclick="copyMarkdown()">Скопировать как Markdown</button>
-        <button class="secondary" onclick="copyJSON()">Скопировать как JSON</button>
-      </div>
-      <p class="hint">Если браузер не разрешит автоматическое копирование, ниже появится поле для ручного копирования.</p>
-      <textarea id="manual-output" class="mono"></textarea>
+      <div class="mini">Файл можно открыть локально в браузере. Ничего не отправляется наружу.</div>
     </div>
   </div>
+</div>
 
-  <script>
-    function collectData() {
-      return {
-        dataset: document.getElementById('dataset').value.trim(),
-        format: document.getElementById('format').value,
-        tool: document.getElementById('tool').value.trim(),
-        issues: document.getElementById('issues').value.trim(),
-        actions: document.getElementById('actions').value.trim(),
-        metrics: {
-          rows_before: document.getElementById('rows_before').value.trim(),
-          rows_after: document.getElementById('rows_after').value.trim(),
-          missing_before: document.getElementById('miss_before').value.trim(),
-          missing_after: document.getElementById('miss_after').value.trim(),
-          duplicates_before: document.getElementById('dup_before').value.trim(),
-          duplicates_after: document.getElementById('dup_after').value.trim(),
-          outliers_before: document.getElementById('out_before').value.trim(),
-          outliers_after: document.getElementById('out_after').value.trim()
-        },
-        notes: document.getElementById('notes').value.trim()
-      };
-    }
+<script>
+const ids = ['datasetTitle','mainFormat','cleaningMode','sourceFile','issues','actions','beforeMetrics','afterMetrics','mainEffect','remainingRisks'];
 
-    function toMarkdown(d) {
-      return `# Отчёт «До / После»
+function sync(){
+  document.getElementById('pv-title').textContent = val('datasetTitle');
+  document.getElementById('pv-format').textContent = val('mainFormat');
+  document.getElementById('pv-mode').textContent = val('cleaningMode');
+  document.getElementById('pv-source').textContent = val('sourceFile');
+  document.getElementById('pv-issues').textContent = val('issues');
+  document.getElementById('pv-actions').textContent = val('actions');
+  document.getElementById('pv-before').textContent = val('beforeMetrics');
+  document.getElementById('pv-after').textContent = val('afterMetrics');
+  document.getElementById('pv-effect').textContent = val('mainEffect');
+  document.getElementById('pv-risks').textContent = val('remainingRisks');
+}
+function val(id){ return document.getElementById(id).value.trim(); }
 
-## 1. Общая информация
-- **Название датасета:** ${d.dataset}
-- **Формат данных:** ${d.format}
-- **Инструмент обработки:** ${d.tool}
+ids.forEach(id => document.getElementById(id).addEventListener('input', sync));
+ids.forEach(id => document.getElementById(id).addEventListener('change', sync));
 
-## 2. Какие проблемы были найдены
-${d.issues}
+function fillExample(){
+  document.getElementById('datasetTitle').value = 'Городские сервисные заявки (учебный набор)';
+  document.getElementById('mainFormat').value = 'CSV';
+  document.getElementById('cleaningMode').value = 'No-code / таблица';
+  document.getElementById('sourceFile').value = 'lesson03_dirty_city_services.csv';
+  document.getElementById('issues').value = 'Пропуски в response_hours и satisfaction_score, повторы request_id, выбросы в cost_rub и response_hours, разные написания категорий и флагов.';
+  document.getElementById('actions').value = 'Удалили повторы request_id, заполнили пропуски по выбранным правилам, привели category / priority / resolved к единообразному виду, исключили очевидные выбросы.';
+  document.getElementById('beforeMetrics').value = 'Строк: 34; пропуски response_hours: 2; пропуски satisfaction_score: 3; повторы request_id: 2; выбросы cost_rub > 50000: 1';
+  document.getElementById('afterMetrics').value = 'Строк: 32; пропуски response_hours: 0; пропуски satisfaction_score: 0; повторы request_id: 0; выбросы cost_rub > 50000: 0';
+  document.getElementById('mainEffect').value = 'Набор стал чище и сопоставимее: исчезли дубли, пропуски и аномальные значения перестали искажать анализ.';
+  document.getElementById('remainingRisks').value = 'Часть решений по пропускам и выбросам основана на учебных правилах; в реальном проекте их нужно дополнительно согласовать с предметной областью.';
+  sync();
+}
+async function copyText(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('Скопировано в буфер обмена');
+  }catch(e){
+    alert('Не удалось автоматически скопировать текст. Скопируйте вручную из консоли браузера.');
+    console.log(text);
+  }
+}
+function buildMarkdown(){
+  return `# Отчёт «До / После»
 
-## 3. Что было сделано
-${d.actions}
+**Название набора:** ${val('datasetTitle')}
+**Основной формат:** ${val('mainFormat')}
+**Режим работы:** ${val('cleaningMode')}
+**Источник / файл:** ${val('sourceFile')}
 
-## 4. Метрики до и после
-| Метрика | До | После |
-|---|---:|---:|
-| Количество строк | ${d.metrics.rows_before} | ${d.metrics.rows_after} |
-| Пропуски | ${d.metrics.missing_before} | ${d.metrics.missing_after} |
-| Дубликаты | ${d.metrics.duplicates_before} | ${d.metrics.duplicates_after} |
-| Выбросы / подозрительные значения | ${d.metrics.outliers_before} | ${d.metrics.outliers_after} |
+## Какие проблемы были в данных
+${val('issues')}
 
-## 5. Вывод
-${d.notes}`;
-    }
+## Какие действия по очистке были выполнены
+${val('actions')}
 
-    async function copyWithFallback(text) {
-      const manual = document.getElementById('manual-output');
-      try {
-        await navigator.clipboard.writeText(text);
-        manual.style.display = 'none';
-        manual.value = '';
-      } catch (e) {
-        manual.style.display = 'block';
-        manual.value = text;
-        manual.focus();
-        manual.select();
-      }
-    }
+## Ключевые метрики до очистки
+${val('beforeMetrics')}
 
-    function copyMarkdown() {
-      const data = collectData();
-      copyWithFallback(toMarkdown(data));
-    }
+## Ключевые метрики после очистки
+${val('afterMetrics')}
 
-    function copyJSON() {
-      const data = collectData();
-      copyWithFallback(JSON.stringify(data, null, 2));
-    }
-  </script>
+## Что стало лучше после очистки
+${val('mainEffect')}
+
+## Что осталось под вопросом
+${val('remainingRisks')}
+`;
+}
+function copyMarkdown(){ copyText(buildMarkdown()); }
+function copyJSON(){
+  const data = {};
+  ids.forEach(id => data[id] = val(id));
+  copyText(JSON.stringify(data, null, 2));
+}
+sync();
+</script>
 </body>
 </html>
