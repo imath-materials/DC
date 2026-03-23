@@ -30,7 +30,7 @@ select:focus{border-color:var(--accent-2);box-shadow:0 0 0 4px rgba(138,77,232,.
 <div class="card">
 <div class="section-title">Выбор варианта</div>
 <div class="two">
-<div><label for="clusterSelect">Код группы / кластера</label><select id="clusterSelect"></select></div>
+<div><label for="clusterSelect">Код группы / кластера</label><select id="clusterSelect"><option value="А / 1">А / 1 — ИТ и анализ данных</option><option value="Б / 2">Б / 2 — Биомед и здоровье</option><option value="В / 3">В / 3 — Город и экология</option><option value="Г / 4">Г / 4 — Инженерные системы</option><option value="Д / 5">Д / 5 — Бизнес и цифровые продукты</option><option value="Е / 6">Е / 6 — Медиа и гуманитарные данные</option></select></div>
 <div><label for="variantSelect">Номер варианта</label><select id="variantSelect"><option value="1">Вариант 1</option><option value="2">Вариант 2</option><option value="3">Вариант 3</option></select></div>
 </div>
 <div class="hint">Пример: группа из кластера «А / 1» выбирает номер варианта 1, 2 или 3.</div>
@@ -53,20 +53,17 @@ const variants = {"А / 1|1": {"clusterCode": "А / 1", "clusterName": "ИТ и 
 const clusterLabels = {"А / 1": "ИТ и анализ данных", "Б / 2": "Биомед и здоровье", "В / 3": "Город и экология", "Г / 4": "Инженерные системы", "Д / 5": "Бизнес и цифровые продукты", "Е / 6": "Медиа и гуманитарные данные"};
 const clusterSelect = document.getElementById('clusterSelect');
 const variantSelect = document.getElementById('variantSelect');
-Object.entries(clusterLabels).forEach(([code, label]) => { const opt=document.createElement('option'); opt.value=code; opt.textContent=code+' — '+label; clusterSelect.appendChild(opt); });
-clusterSelect.value = Object.keys(clusterLabels)[0];
+clusterSelect.value = clusterSelect.value || 'А / 1';
 variantSelect.value = '1';
 function currentVariant() { return variants[clusterSelect.value + '|' + variantSelect.value]; }
 function escapeXml(text) { return String(text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
-function toCsv(records) { const headers=Object.keys(records[0]); const lines=[headers.join(',')]; records.forEach(row => { const vals=headers.map(h=>{ const s=String(row[h] ?? '').replace(/"/g,'""'); return /[",
-]/.test(s)?'"'+s+'"':s; }); lines.push(vals.join(',')); }); return '﻿'+lines.join('
-'); }
+function toCsv(records) { const headers = Object.keys(records[0]); const lines = [headers.join(',')]; records.forEach(row => { const vals = headers.map(h => { const s = String(row[h] ?? '').replace(/\"/g, '\"\"'); return /[\",\n]/.test(s) ? '\"' + s + '\"' : s; }); lines.push(vals.join(',')); }); return '﻿' + lines.join('\n'); }
 function toJson(records) { return JSON.stringify({records:records}, null, 2); }
 function toXml(records) { const headers=Object.keys(records[0]); const body=records.map(row=>{ const inner=headers.map(h => `<${h}>${escapeXml(row[h] ?? '')}</${h}>`).join(''); return `<record>${inner}</record>`; }).join(''); return `<?xml version="1.0" encoding="UTF-8"?><dataset>${body}</dataset>`; }
 function downloadText(filename, text, mime) { const blob=new Blob([text], {type:mime}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
 function slug(text) { return String(text).toLowerCase().replace(/[^а-яёa-z0-9]+/gi,'_').replace(/^_+|_+$/g,''); }
 function downloadCurrent(ext) { const v=currentVariant(); const base=slug(v.clusterCode+'_'+v.title); if(ext==='csv') downloadText(base+'.csv', toCsv(v.records), 'text/csv;charset=utf-8'); if(ext==='json') downloadText(base+'.json', toJson(v.records), 'application/json;charset=utf-8'); if(ext==='xml') downloadText(base+'.xml', toXml(v.records), 'application/xml;charset=utf-8'); }
-function render() { const v=currentVariant(); document.getElementById('pv-title').textContent=v.title; document.getElementById('pv-meta').textContent=v.clusterCode+' — '+v.clusterName+' · Вариант '+variantSelect.value; document.getElementById('pv-description').textContent=v.description; document.getElementById('pv-basic').textContent=v.basicTask; document.getElementById('pv-advanced').textContent=v.advancedTask; }
+function render() { const v=currentVariant(); document.getElementById('pv-title').textContent=v.title; document.getElementById('pv-meta').textContent=v.clusterCode+' — '+v.clusterName+' · Вариант '+variantSelect.value; document.getElementById('pv-description').textContent=v.description; document.getElementById('pv-basic').textContent=v.basicTask; document.getElementById('pv-advanced').textContent=v.advancedTask; document.getElementById('pv-files').innerHTML = '<span style="display:inline-block;margin-right:8px;padding:8px 12px;border-radius:12px;background:#ffffff;border:1px solid #eadcff;color:#5f1ccf;font-weight:600;">CSV</span><span style="display:inline-block;margin-right:8px;padding:8px 12px;border-radius:12px;background:#ffffff;border:1px solid #eadcff;color:#5f1ccf;font-weight:600;">JSON</span><span style="display:inline-block;padding:8px 12px;border-radius:12px;background:#ffffff;border:1px solid #eadcff;color:#5f1ccf;font-weight:600;">XML</span>'; }
 clusterSelect.addEventListener('change', render); variantSelect.addEventListener('change', render); render();
 </script>
 </body>
