@@ -63,7 +63,7 @@
 <body>
 <div class="wrap">
   <h1>Конструктор отчёта «До / После»</h1>
-  <p class="lead">Автономный no-code инструмент для занятия «Форматы и предобработка: очистка и фильтрация». Заполните поля, получите готовый отчёт и скопируйте его в markdown или JSON.</p>
+  <p class="lead">Автономный no-code инструмент для занятия «Форматы и предобработка: очистка и фильтрация». Заполните поля, получите готовый отчёт и при необходимости скопируйте его в markdown или JSON.</p>
 
   <div class="grid">
     <div class="card">
@@ -104,11 +104,11 @@
       <div class="two" style="margin-top:12px;">
         <div>
           <label for="beforeMetrics">Ключевые метрики «до»</label>
-          <textarea id="beforeMetrics">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1</textarea>
+          <textarea id="beforeMetrics">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1; среднее response_hours: 21; медиана: 12</textarea>
         </div>
         <div>
           <label for="afterMetrics">Ключевые метрики «после»</label>
-          <textarea id="afterMetrics">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0</textarea>
+          <textarea id="afterMetrics">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0; среднее response_hours: 14; медиана: 11</textarea>
         </div>
       </div>
 
@@ -137,8 +137,8 @@
           <div class="row"><div class="k">Источник / файл</div><div id="pv-source">lesson03_dirty_city_services.csv</div></div>
           <div class="row"><div class="k">Проблемы</div><div id="pv-issues">Пропуски, дубликаты, выбросы, непоследовательные категориальные значения.</div></div>
           <div class="row"><div class="k">Действия</div><div id="pv-actions">Например: заполнение пропусков, удаление дублей, нормализация категорий, фильтрация выбросов.</div></div>
-          <div class="row"><div class="k">До</div><div id="pv-before">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1</div></div>
-          <div class="row"><div class="k">После</div><div id="pv-after">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0</div></div>
+          <div class="row"><div class="k">До</div><div id="pv-before">Строк: 34; пропуски: 5; повторы ID: 2; выбросы: 1; среднее response_hours: 21; медиана: 12</div></div>
+          <div class="row"><div class="k">После</div><div id="pv-after">Строк: 32; пропуски: 0; повторы ID: 0; выбросы: 0; среднее response_hours: 14; медиана: 11</div></div>
           <div class="row"><div class="k">Что стало лучше</div><div id="pv-effect">Набор стал более однородным, пропали дубли и аномальные значения, категории стало легче анализировать.</div></div>
           <div class="row"><div class="k">Что осталось под вопросом</div><div id="pv-risks">Например: часть решений принималась эвристически; источник не гарантирует полную актуальность; часть значений могла быть восстановлена приблизительно.</div></div>
         </div>
@@ -150,6 +150,7 @@
           <li>Я понимаю, какие проблемы были в наборе.</li>
           <li>Я могу объяснить каждый шаг очистки.</li>
           <li>Я вижу, как изменились метрики «до / после».</li>
+          <li>Я добавил(а) хотя бы одну краткую характеристику выборки.</li>
           <li>Я могу кратко сформулировать ограничения своего решения.</li>
         </ol>
       </div>
