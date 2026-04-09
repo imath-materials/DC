@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 05 — STUDENTS_EXAM schema walkthrough</title>
+<style>
+  :root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;}
+  *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:var(--text);background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);} 
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px;} .hero{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);box-shadow:0 8px 24px rgba(106,0,212,.07);margin-bottom:20px;}
+  .pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a;} .lead{margin:0;max-width:920px;color:var(--muted);font-size:17px;} .layout{display:grid;grid-template-columns:360px 1fr;gap:18px;} .panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:20px;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;} .table-btn{border:1px solid var(--border);border-radius:18px;background:#fff;padding:14px 14px;text-align:left;cursor:pointer;transition:.18s ease;} .table-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(106,0,212,.08);} .table-btn.active{border-color:rgba(138,77,232,.36);background:linear-gradient(180deg,#ffffff 0%,#faf5ff 100%);} .table-btn .name{font-weight:700;color:var(--violet-dark);margin-bottom:4px;} .table-btn .meta{color:var(--muted);font-size:14px;}
+  .section-title{margin:0 0 14px;font-size:24px;color:var(--violet-dark);} .field-row{display:grid;grid-template-columns:190px 140px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #f1e8ff;align-items:start;} .field-row:last-child{border-bottom:none} .field{font-weight:700;color:#2a174a;} .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;} .pk{background:rgba(55,108,255,.10);color:#2857bf;} .fk{background:rgba(255,120,182,.12);color:#b52e6f;} .note{color:var(--muted);font-size:15px;} .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;} .linkchip{display:inline-block;padding:8px 12px;border-radius:14px;background:#fff;border:1px solid var(--border);color:var(--violet-dark);font-size:14px;font-weight:700;} .mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:18px;} .mini-card{padding:18px;border:1px solid var(--border);border-radius:18px;background:#fff;} .mini-card h3{margin:0 0 10px;color:var(--violet-dark);font-size:20px;} ul{margin:0;padding-left:18px} li{margin-bottom:6px}
+  @media (max-width: 920px){.layout{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}} @media (max-width: 640px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="pill">Lesson 05 · интерактивная схема</div>
+    <h1>STUDENTS_EXAM: таблицы, поля и связи</h1>
+    <p class="lead">Эта страница помогает пройти путь от вопроса «какие данные вообще лежат в базе?» к пониманию того, какие таблицы и ключи нужны для первого SQL-запроса. Сначала выберите таблицу, затем посмотрите её поля и связи с другими сущностями.</p>
+  </div>
+  <div class="layout">
+    <div class="panel">
+      <h2 class="section-title">Таблицы базы</h2>
+      <div class="grid" id="tableGrid"></div>
+      <div class="mini">
+        <div class="mini-card"><h3>Как читать схему</h3><ul><li>определите главный объект вопроса;</li><li>найдите таблицу, где он хранится;</li><li>проверьте PK и FK;</li><li>только потом переходите к SQL.</li></ul></div>
+        <div class="mini-card"><h3>Что важно понять</h3><ul><li>база — это не один широкий лист;</li><li>таблицы отвечают за разные сущности;</li><li>ключи связывают данные между таблицами.</li></ul></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2 class="section-title" id="detailTitle">Выберите таблицу</h2>
+      <p class="note" id="detailDesc">После выбора таблицы здесь появятся поля, ключи и связи.</p>
+      <div id="fields"></div>
+      <div class="links" id="links"></div>
+    </div>
+  </div>
+</div>
+<script>
+const schema={TEACHER:{title:"TEACHER",subtitle:"Преподаватели, принимавшие экзамены",description:"Таблица хранит преподавателей. Обычно она не используется первой, но становится важной, когда нужно узнать, кто принимал конкретный экзамен.",fields:[["TeacherId","PK","Идентификатор преподавателя"],["TeacherName","","Имя преподавателя"],["Position","","Должность преподавателя"]],links:["EXAM_SHEET ← TeacherId"]},COURSE:{title:"COURSE",subtitle:"Курсы, которые сдавали студенты",description:"Таблица курсов нужна, когда вопрос связан с названием дисциплины или когда один и тот же курс встречается в нескольких записях расписания.",fields:[["CourseId","PK","Идентификатор курса"],["CourseTitle","","Название курса"]],links:["EXAM_SHEET ← CourseId"]},ST_GROUP:{title:"ST_GROUP",subtitle:"Учебные группы",description:"Таблица групп позволяет отделить сам код группы от студентов и расписания. Через неё удобно обсуждать, почему один и тот же GroupCode появляется в нескольких местах.",fields:[["GroupCode","PK","Код учебной группы"],["Specialization","","Специализация"]],links:["STUDENTS ← GroupCode","EXAM_SHEET ← GroupCode"]},STUDENTS:{title:"STUDENTS",subtitle:"Основные сведения о студентах",description:"Главная таблица для первого знакомства с SQL. С неё удобно начинать запросы: студенты, группы, даты рождения, адреса.",fields:[["StudentId","PK","Идентификатор студента"],["StudentName","","Имя студента"],["GroupCode","FK","Код группы студента"],["BirthDate","","Дата рождения"],["Address","","Адрес"]],links:["ST_GROUP → GroupCode","PHONE_LIST ← StudentId","EXAM_RESULT ← StudentId"]},PHONE_LIST:{title:"PHONE_LIST",subtitle:"Телефоны студентов",description:"Хороший пример таблицы, где один объект может иметь несколько записей. Один студент может иметь мобильный и домашний телефон, поэтому телефоны вынесены в отдельную таблицу.",fields:[["StudentId","FK","Идентификатор студента"],["PhoneType","","Тип телефона"],["Phone","","Номер телефона"]],links:["STUDENTS → StudentId"]},EXAM_SHEET:{title:"EXAM_SHEET",subtitle:"Расписание экзаменов",description:"Ключевая таблица для понимания структуры базы. Она связывает группу, курс, преподавателя, аудиторию и дату экзамена в одном расписании.",fields:[["ExamSheetId","PK","Идентификатор экзамена в расписании"],["GroupCode","FK","Код группы"],["CourseId","FK","Идентификатор курса"],["TeacherId","FK","Идентификатор преподавателя"],["ClassRoom","","Аудитория"],["ExamDate","","Дата экзамена"]],links:["ST_GROUP → GroupCode","COURSE → CourseId","TEACHER → TeacherId","EXAM_RESULT ← ExamSheetId"]},EXAM_RESULT:{title:"EXAM_RESULT",subtitle:"Результаты экзаменов",description:"Именно здесь лежат оценки. Чтобы понять, кто получил оценку и за какой экзамен, таблицу результатов нужно читать вместе со STUDENTS и EXAM_SHEET.",fields:[["StudentId","FK","Идентификатор студента"],["ExamSheetId","FK","Идентификатор экзамена"],["Grade","","Оценка"]],links:["STUDENTS → StudentId","EXAM_SHEET → ExamSheetId"]}};
+const order=["STUDENTS","ST_GROUP","COURSE","TEACHER","EXAM_SHEET","EXAM_RESULT","PHONE_LIST"];const grid=document.getElementById("tableGrid");const fields=document.getElementById("fields");const detailTitle=document.getElementById("detailTitle");const detailDesc=document.getElementById("detailDesc");const links=document.getElementById("links");
+function badgeHtml(role){if(role==="PK") return '<span class="badge pk">PK</span>'; if(role==="FK") return '<span class="badge fk">FK</span>'; return '<span class="note">—</span>';}
+function showTable(key){document.querySelectorAll('.table-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.key===key));const item=schema[key];detailTitle.textContent=item.title+' — '+item.subtitle;detailDesc.textContent=item.description;fields.innerHTML=item.fields.map(([field,role,desc])=>`<div class="field-row"><div class="field">${field}</div><div>${badgeHtml(role)}</div><div class="note">${desc}</div></div>`).join('');links.innerHTML=item.links.map(link=>`<span class="linkchip">${link}</span>`).join('');}
+order.forEach(key=>{const item=schema[key];const btn=document.createElement('button');btn.className='table-btn';btn.dataset.key=key;btn.innerHTML=`<div class="name">${item.title}</div><div class="meta">${item.subtitle}</div>`;btn.addEventListener('click',()=>showTable(key));grid.appendChild(btn);});
+showTable('STUDENTS');
+</script>
+</body>
+</html>

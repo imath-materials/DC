@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 05 — SQL query trainer</title>
+<style>
+  :root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;--green:#1d8f5a;--red:#c0392b}
+  *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:var(--text);background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);} .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 40px;} .hero{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);box-shadow:0 8px 24px rgba(106,0,212,.07);margin-bottom:20px;} .pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;} h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a;} .lead{margin:0;color:var(--muted);font-size:17px;max-width:900px;} .layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;} .panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:20px;} .task-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;} .task-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--violet-dark);font-weight:700;cursor:pointer;} .task-btn.active{background:rgba(138,77,232,.10);} label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;} select,input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-size:15px;margin-bottom:12px;} button.action{display:inline-block;padding:11px 16px;border-radius:14px;border:none;cursor:pointer;font-weight:700;margin-right:8px;} .primary{background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;} .secondary{background:#fff;border:1px solid var(--border);color:var(--violet-dark);} pre{white-space:pre-wrap;word-break:break-word;background:#faf5ff;border:1px solid var(--border);border-radius:18px;padding:16px;font-size:15px;color:#2a174a;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .hint{margin-top:14px;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--border);color:var(--muted);} @media (max-width: 920px){.layout{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero"><div class="pill">Lesson 05 · SQL-тренажёр</div><h1>Собери базовый SQL-запрос</h1><p class="lead">Этот тренажёр не заменяет реальную работу в pgAdmin, но помогает закрепить логику базового запроса. В каждом задании нужно выбрать таблицу, поля и нужную операцию, а затем сверить результат с эталонным решением.</p></div>
+  <div class="layout">
+    <div class="panel">
+      <div class="task-nav" id="nav"></div>
+      <h2 id="taskTitle" style="margin:0 0 8px; color:#5f1ccf;"></h2>
+      <p id="taskDesc" style="margin:0 0 18px; color:#6f6290;"></p>
+      <label>SELECT</label><input id="selectPart" placeholder="Например: StudentName, GroupCode" />
+      <label>FROM</label><select id="fromPart"><option value="STUDENTS">STUDENTS</option><option value="EXAM_RESULT">EXAM_RESULT</option><option value="EXAM_SHEET">EXAM_SHEET</option></select>
+      <label>WHERE (необязательно)</label><input id="wherePart" placeholder="Например: GroupCode = 'M3202'" />
+      <label>GROUP BY (необязательно)</label><input id="groupPart" placeholder="Например: GroupCode" />
+      <label>ORDER BY / LIMIT (необязательно)</label><input id="tailPart" placeholder="Например: ORDER BY BirthDate LIMIT 5" />
+      <div style="margin-top:6px;"><button class="action primary" id="checkBtn">Проверить</button><button class="action secondary" id="solutionBtn">Показать эталон</button></div>
+      <div class="hint" id="feedback">Здесь появится комментарий по вашему ответу.</div>
+    </div>
+    <div class="panel"><h2 style="margin:0 0 12px; color:#5f1ccf;">Ваш запрос</h2><pre id="sqlPreview">SELECT ...
+FROM ...;</pre><h2 style="margin:18px 0 12px; color:#5f1ccf;">Эталонное решение</h2><pre id="solution">Пока скрыто.</pre></div>
+  </div>
+</div>
+<script>
+const tasks=[{id:1,title:'Задание 1. Имена студентов и коды групп',desc:'Нужно вывести имена студентов и коды их групп из таблицы STUDENTS.',solution:"SELECT StudentName, GroupCode\nFROM STUDENTS;",checks:{from:'STUDENTS',mustInclude:['StudentName','GroupCode'],forbidGroup:true}},{id:2,title:'Задание 2. Студенты одной группы',desc:'Нужно выбрать студентов группы M3202.',solution:"SELECT StudentName, GroupCode\nFROM STUDENTS\nWHERE GroupCode = 'M3202';",checks:{from:'STUDENTS',mustInclude:['StudentName','GroupCode'],whereIncludes:['GroupCode','M3202']}},{id:3,title:'Задание 3. Пять самых ранних дат рождения',desc:'Нужно вывести имена студентов и даты рождения, отсортировав по BirthDate и оставив только 5 строк.',solution:"SELECT StudentName, BirthDate\nFROM STUDENTS\nORDER BY BirthDate\nLIMIT 5;",checks:{from:'STUDENTS',mustInclude:['StudentName','BirthDate'],tailIncludes:['ORDER BY','BirthDate','LIMIT','5']}},{id:4,title:'Задание 4. Число студентов по группам',desc:'Нужно получить сводный ответ: сколько студентов учится в каждой группе.',solution:"SELECT GroupCode, COUNT(*) AS students_count\nFROM STUDENTS\nGROUP BY GroupCode;",checks:{from:'STUDENTS',mustInclude:['GroupCode','COUNT'],groupIncludes:['GroupCode']}}];
+let current=0;const nav=document.getElementById('nav');const title=document.getElementById('taskTitle');const desc=document.getElementById('taskDesc');const selectPart=document.getElementById('selectPart');const fromPart=document.getElementById('fromPart');const wherePart=document.getElementById('wherePart');const groupPart=document.getElementById('groupPart');const tailPart=document.getElementById('tailPart');const sqlPreview=document.getElementById('sqlPreview');const solution=document.getElementById('solution');const feedback=document.getElementById('feedback');
+function renderNav(){nav.innerHTML='';tasks.forEach((task,idx)=>{const btn=document.createElement('button');btn.className='task-btn'+(idx===current?' active':'');btn.textContent=task.id;btn.addEventListener('click',()=>{current=idx;resetInputs();loadTask();});nav.appendChild(btn);});}
+function resetInputs(){selectPart.value='';wherePart.value='';groupPart.value='';tailPart.value='';fromPart.value='STUDENTS';solution.textContent='Пока скрыто.';feedback.textContent='Здесь появится комментарий по вашему ответу.';updatePreview();}
+function loadTask(){const task=tasks[current];renderNav();title.textContent=task.title;desc.textContent=task.desc;}
+function updatePreview(){let sql='SELECT '+(selectPart.value||'...')+'\n';sql+='FROM '+fromPart.value;if(wherePart.value.trim()) sql+='\nWHERE '+wherePart.value.trim();if(groupPart.value.trim()) sql+='\nGROUP BY '+groupPart.value.trim();if(tailPart.value.trim()) sql+='\n'+tailPart.value.trim();sql+=';';sqlPreview.textContent=sql;}
+[selectPart,fromPart,wherePart,groupPart,tailPart].forEach(el=>el.addEventListener('input',updatePreview));
+function containsAll(source,parts){return parts.every(p=>source.toLowerCase().includes(p.toLowerCase()));}
+document.getElementById('checkBtn').addEventListener('click',()=>{const task=tasks[current];const checks=task.checks;let ok=true;const notes=[];if(fromPart.value!==checks.from){ok=false;notes.push('Выбрана не та таблица в блоке FROM.');} if(checks.mustInclude && !containsAll(selectPart.value,checks.mustInclude)){ok=false;notes.push('В SELECT не хватает нужных полей или агрегатной функции.');} if(checks.whereIncludes && !containsAll(wherePart.value,checks.whereIncludes)){ok=false;notes.push('Условие WHERE ещё не соответствует задаче.');} if(checks.groupIncludes && !containsAll(groupPart.value,checks.groupIncludes)){ok=false;notes.push('Для сводного ответа не хватает корректного GROUP BY.');} if(checks.tailIncludes && !containsAll(tailPart.value,checks.tailIncludes)){ok=false;notes.push('Хвост запроса ещё не содержит нужную сортировку или LIMIT.');} if(checks.forbidGroup && groupPart.value.trim()){ok=false;notes.push('В этом задании GROUP BY не нужен.');} feedback.innerHTML = ok ? '<span class="ok">Похоже на корректное решение.</span> Вы правильно определили структуру запроса. Теперь сравните свой вариант с эталоном и обратите внимание на порядок операторов.' : '<span class="bad">Пока не хватает нескольких частей.</span><br>'+notes.join('<br>');});
+document.getElementById('solutionBtn').addEventListener('click',()=>{solution.textContent=tasks[current].solution;});
+renderNav();loadTask();updatePreview();
+</script>
+</body>
+</html>
