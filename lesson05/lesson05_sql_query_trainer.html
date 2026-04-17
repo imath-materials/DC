@@ -29,52 +29,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;} th,td
 .small{font-size:14px;color:var(--muted);}
 @media (max-width:980px){.layout{grid-template-columns:1fr;} .meta-grid{grid-template-columns:1fr;}}
 </style>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow-y: hidden;
-    overflow-x: hidden;
-  }
-</style>
 </head>
-<script>
-(function () {
-  const targetOrigin = 'https://lms.itmo.ru';
-
-  function getHeight() {
-    return Math.max(
-      document.documentElement.scrollHeight,
-      document.body ? document.body.scrollHeight : 0,
-      document.documentElement.offsetHeight,
-      document.body ? document.body.offsetHeight : 0,
-      document.documentElement.clientHeight
-    );
-  }
-
-  function sendHeight() {
-    window.parent.postMessage({
-      type: 'sqltrainer-height',
-      height: getHeight()
-    }, targetOrigin);
-  }
-
-  window.addEventListener('load', sendHeight);
-  window.addEventListener('resize', sendHeight);
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', sendHeight);
-  }
-
-  const ro = new ResizeObserver(sendHeight);
-  ro.observe(document.documentElement);
-  if (document.body) ro.observe(document.body);
-
-  setTimeout(sendHeight, 100);
-  setTimeout(sendHeight, 500);
-  setTimeout(sendHeight, 1000);
-})();
-</script>
 <body>
 <div class="wrap">
   <div class="hero">
@@ -313,5 +268,53 @@ renderNav();
 loadTask();
 updatePreview();
 </script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+</style>
+
+<script>
+(function () {
+  const targetOrigin = 'https://lms.itmo.ru';
+
+  function getHeight() {
+    return Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0,
+      document.documentElement.offsetHeight,
+      document.body ? document.body.offsetHeight : 0,
+      document.documentElement.clientHeight
+    );
+  }
+
+  function sendHeight() {
+    window.parent.postMessage({
+      type: 'sqltrainer-height',
+      height: getHeight()
+    }, targetOrigin);
+  }
+
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', sendHeight);
+  }
+
+  const ro = new ResizeObserver(sendHeight);
+  ro.observe(document.documentElement);
+  if (document.body) ro.observe(document.body);
+
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+  setTimeout(sendHeight, 1000);
+})();
+</script>
+
 </body>
 </html>
