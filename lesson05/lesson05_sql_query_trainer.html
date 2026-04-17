@@ -274,7 +274,6 @@ updatePreview();
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    overflow-y: hidden;
   }
 </style>
 
@@ -293,26 +292,34 @@ updatePreview();
   }
 
   function sendHeight() {
+    const height = getHeight();
     window.parent.postMessage({
       type: 'sqltrainer-height',
-      height: getHeight()
+      height: height
     }, targetOrigin);
   }
 
-  window.addEventListener('load', sendHeight);
-  window.addEventListener('resize', sendHeight);
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', sendHeight);
+  function sendHeightSoon() {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(sendHeight);
+    });
   }
 
-  const ro = new ResizeObserver(sendHeight);
+  window.addEventListener('load', sendHeightSoon);
+  window.addEventListener('resize', sendHeightSoon);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', sendHeightSoon);
+  }
+
+  const ro = new ResizeObserver(sendHeightSoon);
   ro.observe(document.documentElement);
   if (document.body) ro.observe(document.body);
 
-  setTimeout(sendHeight, 100);
-  setTimeout(sendHeight, 500);
-  setTimeout(sendHeight, 1000);
+  setTimeout(sendHeightSoon, 100);
+  setTimeout(sendHeightSoon, 500);
+  setTimeout(sendHeightSoon, 1000);
+  setTimeout(sendHeightSoon, 2000);
 })();
 </script>
 
