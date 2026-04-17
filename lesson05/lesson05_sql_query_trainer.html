@@ -3,44 +3,270 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lesson 05 — SQL query trainer</title>
+<title>Lesson 05 — SQL-тренажёр</title>
 <style>
-  :root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;--green:#1d8f5a;--red:#c0392b}
-  *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:var(--text);background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);} .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 40px;} .hero{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);box-shadow:0 8px 24px rgba(106,0,212,.07);margin-bottom:20px;} .pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;} h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a;} .lead{margin:0;color:var(--muted);font-size:17px;max-width:900px;} .layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;} .panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:20px;} .task-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;} .task-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--violet-dark);font-weight:700;cursor:pointer;} .task-btn.active{background:rgba(138,77,232,.10);} label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;} select,input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-size:15px;margin-bottom:12px;} button.action{display:inline-block;padding:11px 16px;border-radius:14px;border:none;cursor:pointer;font-weight:700;margin-right:8px;} .primary{background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;} .secondary{background:#fff;border:1px solid var(--border);color:var(--violet-dark);} pre{white-space:pre-wrap;word-break:break-word;background:#faf5ff;border:1px solid var(--border);border-radius:18px;padding:16px;font-size:15px;color:#2a174a;} .ok{color:var(--green);font-weight:700;} .bad{color:var(--red);font-weight:700;} .hint{margin-top:14px;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--border);color:var(--muted);} @media (max-width: 920px){.layout{grid-template-columns:1fr;}}
+:root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;--green:#1d8f5a;--amber:#b26a00;--red:#c0392b}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:var(--text);background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px;} .hero{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);box-shadow:0 8px 24px rgba(106,0,212,.07);margin-bottom:20px;}
+.pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a;}
+.lead{margin:0;color:var(--muted);font-size:17px;max-width:980px;}
+.layout{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:start;}
+.panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:20px;}
+.task-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;} .task-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--violet-dark);font-weight:700;cursor:pointer;}
+.task-btn.active{background:rgba(138,77,232,.10);} label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;}
+select,input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-size:15px;margin-bottom:12px;}
+button.action{display:inline-block;padding:11px 16px;border-radius:14px;border:none;cursor:pointer;font-weight:700;margin-right:8px;margin-top:6px;}
+.primary{background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;}
+.secondary{background:#fff;border:1px solid var(--border);color:var(--violet-dark);}
+pre{white-space:pre-wrap;word-break:break-word;background:#faf5ff;border:1px solid var(--border);border-radius:18px;padding:16px;font-size:15px;color:#2a174a;}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:16px;border:1px solid var(--border);background:#fff;}
+.feedback strong{display:block;margin-bottom:6px;}
+.ok strong{color:var(--green);} .close strong{color:var(--amber);} .partial strong{color:#8a4de8;} .bad strong{color:var(--red);}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.meta-card{padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;} th,td{border:1px solid #e7ddfb;padding:10px 12px;text-align:left;vertical-align:top;} th{background:#f2eaff;color:#2a174a;}
+.small{font-size:14px;color:var(--muted);}
+@media (max-width:980px){.layout{grid-template-columns:1fr;} .meta-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="hero"><div class="pill">Lesson 05 · SQL-тренажёр</div><h1>Собери базовый SQL-запрос</h1><p class="lead">Этот тренажёр не заменяет реальную работу в pgAdmin, но помогает закрепить логику базового запроса. В каждом задании нужно выбрать таблицу, поля и нужную операцию, а затем сверить результат с эталонным решением.</p></div>
+  <div class="hero">
+    <div class="pill">Lesson 05 · SQL-тренажёр</div>
+    <h1>Базовые SQL-запросы к тестовой учебной базе данных</h1>
+    <p class="lead">Этот тренажёр нужен для закрепления структуры запроса. Он не исполняет SQL в настоящей СУБД, но проверяет логику конструкции, показывает градацию близости к эталону и, при корректном или почти корректном решении, выводит пример ожидаемого результата на тестовых учебных данных.</p>
+  </div>
+
   <div class="layout">
     <div class="panel">
       <div class="task-nav" id="nav"></div>
       <h2 id="taskTitle" style="margin:0 0 8px; color:#5f1ccf;"></h2>
       <p id="taskDesc" style="margin:0 0 18px; color:#6f6290;"></p>
-      <label>SELECT</label><input id="selectPart" placeholder="Например: StudentName, GroupCode" />
-      <label>FROM</label><select id="fromPart"><option value="STUDENTS">STUDENTS</option><option value="EXAM_RESULT">EXAM_RESULT</option><option value="EXAM_SHEET">EXAM_SHEET</option></select>
-      <label>WHERE (необязательно)</label><input id="wherePart" placeholder="Например: GroupCode = 'M3202'" />
-      <label>GROUP BY (необязательно)</label><input id="groupPart" placeholder="Например: GroupCode" />
-      <label>ORDER BY / LIMIT (необязательно)</label><input id="tailPart" placeholder="Например: ORDER BY BirthDate LIMIT 5" />
-      <div style="margin-top:6px;"><button class="action primary" id="checkBtn">Проверить</button><button class="action secondary" id="solutionBtn">Показать эталон</button></div>
-      <div class="hint" id="feedback">Здесь появится комментарий по вашему ответу.</div>
+
+      <label>SELECT</label>
+      <input id="selectPart" placeholder="Например: student_name, group_code" />
+
+      <label>FROM</label>
+      <input id="fromPart" placeholder="Например: students" />
+
+      <label>WHERE (необязательно)</label>
+      <input id="wherePart" placeholder="Например: faculty = 'ФТМИ'" />
+
+      <label>GROUP BY (необязательно)</label>
+      <input id="groupPart" placeholder="Например: faculty" />
+
+      <label>ORDER BY / LIMIT / JOIN-хвост</label>
+      <input id="tailPart" placeholder="Например: ORDER BY student_name LIMIT 5" />
+
+      <div>
+        <button class="action primary" id="checkBtn">Проверить</button>
+        <button class="action secondary" id="solutionBtn">Показать эталон</button>
+        <button class="action secondary" id="resultBtn">Показать ожидаемый результат</button>
+      </div>
+
+      <div class="feedback bad" id="feedback">
+        <strong>Пока без оценки.</strong>
+        Здесь появится комментарий по вашему ответу.
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <strong>Градации ответа</strong>
+          <div class="small">1. Верно<br>2. Похоже на корректное решение<br>3. Частично верно<br>4. Пока не подходит</div>
+        </div>
+        <div class="meta-card">
+          <strong>Как читать фидбек</strong>
+          <div class="small">Если решение засчитано как корректное или близкое к корректному, ниже появится пример результата на тестовой учебной БД.</div>
+        </div>
+      </div>
     </div>
-    <div class="panel"><h2 style="margin:0 0 12px; color:#5f1ccf;">Ваш запрос</h2><pre id="sqlPreview">SELECT ...
-FROM ...;</pre><h2 style="margin:18px 0 12px; color:#5f1ccf;">Эталонное решение</h2><pre id="solution">Пока скрыто.</pre></div>
+
+    <div class="panel">
+      <h2 style="margin:0 0 12px; color:#5f1ccf;">Ваш запрос</h2>
+      <pre id="sqlPreview">SELECT ...
+FROM ...;</pre>
+
+      <h2 style="margin:18px 0 12px; color:#5f1ccf;">Эталонное решение</h2>
+      <pre id="solution">Пока скрыто.</pre>
+
+      <h2 style="margin:18px 0 12px; color:#5f1ccf;">Пример ожидаемого результата</h2>
+      <div id="resultPreview" class="small">Пока скрыто. Он откроется автоматически при корректном или почти корректном ответе, либо по кнопке.</div>
+    </div>
   </div>
 </div>
+
 <script>
-const tasks=[{id:1,title:'Задание 1. Имена студентов и коды групп',desc:'Нужно вывести имена студентов и коды их групп из таблицы STUDENTS.',solution:"SELECT StudentName, GroupCode\nFROM STUDENTS;",checks:{from:'STUDENTS',mustInclude:['StudentName','GroupCode'],forbidGroup:true}},{id:2,title:'Задание 2. Студенты одной группы',desc:'Нужно выбрать студентов группы M3202.',solution:"SELECT StudentName, GroupCode\nFROM STUDENTS\nWHERE GroupCode = 'M3202';",checks:{from:'STUDENTS',mustInclude:['StudentName','GroupCode'],whereIncludes:['GroupCode','M3202']}},{id:3,title:'Задание 3. Пять самых ранних дат рождения',desc:'Нужно вывести имена студентов и даты рождения, отсортировав по BirthDate и оставив только 5 строк.',solution:"SELECT StudentName, BirthDate\nFROM STUDENTS\nORDER BY BirthDate\nLIMIT 5;",checks:{from:'STUDENTS',mustInclude:['StudentName','BirthDate'],tailIncludes:['ORDER BY','BirthDate','LIMIT','5']}},{id:4,title:'Задание 4. Число студентов по группам',desc:'Нужно получить сводный ответ: сколько студентов учится в каждой группе.',solution:"SELECT GroupCode, COUNT(*) AS students_count\nFROM STUDENTS\nGROUP BY GroupCode;",checks:{from:'STUDENTS',mustInclude:['GroupCode','COUNT'],groupIncludes:['GroupCode']}}];
-let current=0;const nav=document.getElementById('nav');const title=document.getElementById('taskTitle');const desc=document.getElementById('taskDesc');const selectPart=document.getElementById('selectPart');const fromPart=document.getElementById('fromPart');const wherePart=document.getElementById('wherePart');const groupPart=document.getElementById('groupPart');const tailPart=document.getElementById('tailPart');const sqlPreview=document.getElementById('sqlPreview');const solution=document.getElementById('solution');const feedback=document.getElementById('feedback');
-function renderNav(){nav.innerHTML='';tasks.forEach((task,idx)=>{const btn=document.createElement('button');btn.className='task-btn'+(idx===current?' active':'');btn.textContent=task.id;btn.addEventListener('click',()=>{current=idx;resetInputs();loadTask();});nav.appendChild(btn);});}
-function resetInputs(){selectPart.value='';wherePart.value='';groupPart.value='';tailPart.value='';fromPart.value='STUDENTS';solution.textContent='Пока скрыто.';feedback.textContent='Здесь появится комментарий по вашему ответу.';updatePreview();}
-function loadTask(){const task=tasks[current];renderNav();title.textContent=task.title;desc.textContent=task.desc;}
-function updatePreview(){let sql='SELECT '+(selectPart.value||'...')+'\n';sql+='FROM '+fromPart.value;if(wherePart.value.trim()) sql+='\nWHERE '+wherePart.value.trim();if(groupPart.value.trim()) sql+='\nGROUP BY '+groupPart.value.trim();if(tailPart.value.trim()) sql+='\n'+tailPart.value.trim();sql+=';';sqlPreview.textContent=sql;}
-[selectPart,fromPart,wherePart,groupPart,tailPart].forEach(el=>el.addEventListener('input',updatePreview));
-function containsAll(source,parts){return parts.every(p=>source.toLowerCase().includes(p.toLowerCase()));}
-document.getElementById('checkBtn').addEventListener('click',()=>{const task=tasks[current];const checks=task.checks;let ok=true;const notes=[];if(fromPart.value!==checks.from){ok=false;notes.push('Выбрана не та таблица в блоке FROM.');} if(checks.mustInclude && !containsAll(selectPart.value,checks.mustInclude)){ok=false;notes.push('В SELECT не хватает нужных полей или агрегатной функции.');} if(checks.whereIncludes && !containsAll(wherePart.value,checks.whereIncludes)){ok=false;notes.push('Условие WHERE ещё не соответствует задаче.');} if(checks.groupIncludes && !containsAll(groupPart.value,checks.groupIncludes)){ok=false;notes.push('Для сводного ответа не хватает корректного GROUP BY.');} if(checks.tailIncludes && !containsAll(tailPart.value,checks.tailIncludes)){ok=false;notes.push('Хвост запроса ещё не содержит нужную сортировку или LIMIT.');} if(checks.forbidGroup && groupPart.value.trim()){ok=false;notes.push('В этом задании GROUP BY не нужен.');} feedback.innerHTML = ok ? '<span class="ok">Похоже на корректное решение.</span> Вы правильно определили структуру запроса. Теперь сравните свой вариант с эталоном и обратите внимание на порядок операторов.' : '<span class="bad">Пока не хватает нескольких частей.</span><br>'+notes.join('<br>');});
-document.getElementById('solutionBtn').addEventListener('click',()=>{solution.textContent=tasks[current].solution;});
-renderNav();loadTask();updatePreview();
+const tasks = [{"id": 1, "title": "Задание 1. Имена студентов и коды групп", "desc": "Нужно вывести имена студентов и коды их групп из таблицы students.", "solution": "SELECT student_name, group_code\nFROM students\nORDER BY student_name\nLIMIT 5;", "checks": {"from": ["students"], "select": ["student_name", "group_code"], "tail": ["order by", "student_name", "limit", "5"], "forbid": ["join", "group by"]}, "preview": {"columns": ["student_name", "group_code"], "rows": [["Алина Воронова", "M3201"], ["Борис Крылов", "M3201"], ["Виктория Смирнова", "M3202"], ["Глеб Новиков", "M3202"], ["Дарья Лаврова", "M3301"]]}}, {"id": 2, "title": "Задание 2. Студенты одного факультета", "desc": "Нужно вывести имена студентов и факультеты только для факультета ФТМИ.", "solution": "SELECT student_name, faculty\nFROM students\nWHERE faculty = 'ФТМИ'\nORDER BY student_name;", "checks": {"from": ["students"], "select": ["student_name", "faculty"], "where": ["faculty", "фтми"], "tail": ["order by", "student_name"], "forbid": ["join", "group by"]}, "preview": {"columns": ["student_name", "faculty"], "rows": [["Алина Воронова", "ФТМИ"], ["Борис Крылов", "ФТМИ"], ["Виктория Смирнова", "ФТМИ"], ["Глеб Новиков", "ФТМИ"]]}}, {"id": 3, "title": "Задание 3. Сколько студентов на каждом факультете", "desc": "Нужно получить сводный ответ: количество студентов по факультетам.", "solution": "SELECT faculty, COUNT(*) AS students_count\nFROM students\nGROUP BY faculty\nORDER BY students_count DESC, faculty;", "checks": {"from": ["students"], "select": ["faculty", "count"], "group": ["faculty"], "tail": ["order by"], "forbid": ["join"]}, "preview": {"columns": ["faculty", "students_count"], "rows": [["ФЕН", 4], ["ФТМИ", 4], ["ФЦТ", 2]]}}, {"id": 4, "title": "Задание 4. Сколько результатов у каждого статуса", "desc": "Нужно посчитать, сколько записей в таблице results относится к каждому значению поля grade_status.", "solution": "SELECT grade_status, COUNT(*) AS results_count\nFROM results\nGROUP BY grade_status\nORDER BY results_count DESC, grade_status;", "checks": {"from": ["results"], "select": ["grade_status", "count"], "group": ["grade_status"], "tail": ["order by"], "forbid": ["join"]}, "preview": {"columns": ["grade_status", "results_count"], "rows": [["graded", 12], ["absent", 1], ["unknown", 1]]}}, {"id": 5, "title": "Задание 5. Мягкий мостик к JOIN", "desc": "Опционально: вывести имя студента, дисциплину и оценку для аттестованных результатов. Это уже пример следующего шага.", "solution": "SELECT s.student_name, d.discipline_name, r.grade_value\nFROM results r\nJOIN students s ON r.student_id = s.student_id\nJOIN disciplines d ON r.discipline_id = d.discipline_id\nWHERE r.grade_status = 'graded'\nORDER BY r.grade_value DESC, s.student_name\nLIMIT 5;", "checks": {"from": ["results"], "select": ["student_name", "discipline_name", "grade_value"], "mustAny": [["join students", "join disciplines"], ["grade_status", "graded"]], "tail": ["order by", "limit", "5"]}, "preview": {"columns": ["student_name", "discipline_name", "grade_value"], "rows": [["Алина Воронова", "Линейная алгебра", 5], ["Алина Воронова", "Базы данных", 5], ["Виктория Смирнова", "Линейная алгебра", 5], ["Виктория Смирнова", "Базы данных", 5], ["Жанна Полякова", "Математическая статистика", 5]]}}];
+
+let current = 0;
+const nav = document.getElementById('nav');
+const title = document.getElementById('taskTitle');
+const desc = document.getElementById('taskDesc');
+const selectPart = document.getElementById('selectPart');
+const fromPart = document.getElementById('fromPart');
+const wherePart = document.getElementById('wherePart');
+const groupPart = document.getElementById('groupPart');
+const tailPart = document.getElementById('tailPart');
+const sqlPreview = document.getElementById('sqlPreview');
+const solution = document.getElementById('solution');
+const resultPreview = document.getElementById('resultPreview');
+const feedback = document.getElementById('feedback');
+
+function renderNav() {
+  nav.innerHTML = '';
+  tasks.forEach((task, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'task-btn' + (idx === current ? ' active' : '');
+    btn.textContent = task.id;
+    btn.addEventListener('click', () => {
+      current = idx;
+      resetInputs();
+      loadTask();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function loadTask() {
+  const task = tasks[current];
+  renderNav();
+  title.textContent = task.title;
+  desc.textContent = task.desc;
+}
+
+function resetInputs() {
+  selectPart.value = '';
+  fromPart.value = '';
+  wherePart.value = '';
+  groupPart.value = '';
+  tailPart.value = '';
+  solution.textContent = 'Пока скрыто.';
+  resultPreview.innerHTML = '<div class="small">Пока скрыто. Он откроется автоматически при корректном или почти корректном ответе, либо по кнопке.</div>';
+  feedback.className = 'feedback bad';
+  feedback.innerHTML = '<strong>Пока без оценки.</strong>Здесь появится комментарий по вашему ответу.';
+  updatePreview();
+}
+
+function updatePreview() {
+  let sql = 'SELECT ' + (selectPart.value.trim() || '...') + '\n';
+  sql += 'FROM ' + (fromPart.value.trim() || '...');
+  if (wherePart.value.trim()) sql += '\nWHERE ' + wherePart.value.trim();
+  if (groupPart.value.trim()) sql += '\nGROUP BY ' + groupPart.value.trim();
+  if (tailPart.value.trim()) sql += '\n' + tailPart.value.trim();
+  sql += ';';
+  sqlPreview.textContent = sql;
+}
+
+function textOfAllParts() {
+  return [
+    'select ' + selectPart.value,
+    'from ' + fromPart.value,
+    'where ' + wherePart.value,
+    'group by ' + groupPart.value,
+    tailPart.value
+  ].join(' ').toLowerCase();
+}
+
+function countTokens(source, tokens) {
+  if (!tokens || !tokens.length) return {hits:0, total:0};
+  let hits = 0;
+  tokens.forEach(token => {
+    if (source.includes(token.toLowerCase())) hits += 1;
+  });
+  return {hits, total: tokens.length};
+}
+
+function scoreAnswer(task) {
+  const allText = textOfAllParts();
+  let score = 0;
+  const notes = [];
+
+  const fromScore = countTokens(allText, task.checks.from || []);
+  if (fromScore.total) {
+    score += (fromScore.hits / fromScore.total) * 20;
+    if (fromScore.hits < fromScore.total) notes.push('Проверьте таблицу в блоке FROM.');
+  }
+
+  const selectScore = countTokens(allText, task.checks.select || []);
+  if (selectScore.total) {
+    score += (selectScore.hits / selectScore.total) * 35;
+    if (selectScore.hits < selectScore.total) notes.push('В SELECT пока не хватает нужных полей или агрегатной функции.');
+  }
+
+  const whereScore = countTokens(allText, task.checks.where || []);
+  if (whereScore.total) {
+    score += (whereScore.hits / whereScore.total) * 15;
+    if (whereScore.hits < whereScore.total) notes.push('Условие WHERE ещё не соответствует задаче.');
+  }
+
+  const groupScore = countTokens(allText, task.checks.group || []);
+  if (groupScore.total) {
+    score += (groupScore.hits / groupScore.total) * 15;
+    if (groupScore.hits < groupScore.total) notes.push('Для сводного ответа ещё не хватает корректного GROUP BY.');
+  }
+
+  const tailScore = countTokens(allText, task.checks.tail || []);
+  if (tailScore.total) {
+    score += (tailScore.hits / tailScore.total) * 15;
+    if (tailScore.hits < tailScore.total) notes.push('Проверьте ORDER BY, LIMIT или хвост запроса.');
+  }
+
+  if (task.checks.mustAny) {
+    task.checks.mustAny.forEach(group => {
+      const ok = group.some(token => allText.includes(token.toLowerCase()));
+      if (ok) score += 10;
+      else notes.push('В запросе не хватает одного из обязательных смысловых фрагментов.');
+    });
+  }
+
+  if (task.checks.forbid) {
+    task.checks.forbid.forEach(token => {
+      if (allText.includes(token.toLowerCase())) {
+        score -= 12;
+        notes.push(`Для этого задания оператор <code>${token.toUpperCase()}</code> не нужен.`);
+      }
+    });
+  }
+
+  if (score >= 90) return {level:'ok', title:'Верно.', body:'Структура запроса соответствует задаче. Сравните свой вариант с эталоном и посмотрите ожидаемый результат на тестовой учебной БД.', notes};
+  if (score >= 70) return {level:'close', title:'Похоже на корректное решение.', body:'Основная логика уже на месте, но стоит ещё раз проверить детали записи, порядок операторов или полноту конструкции.', notes};
+  if (score >= 45) return {level:'partial', title:'Частично верно.', body:'Вы уже поймали часть логики запроса, но одной-двух важных частей пока не хватает.', notes};
+  return {level:'bad', title:'Пока не подходит.', body:'Запрос ещё не соответствует задаче. Попробуйте сначала определить, какие столбцы и какая таблица нужны для ответа.', notes};
+}
+
+function renderResult(task) {
+  const cols = task.preview.columns;
+  const rows = task.preview.rows;
+  let html = '<div class="small">Ниже показан пример того, как будет выглядеть результат на тестовой учебной базе данных.</div>';
+  html += '<table><thead><tr>' + cols.map(col => `<th>${col}</th>`).join('') + '</tr></thead><tbody>';
+  html += rows.map(row => '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>').join('');
+  html += '</tbody></table>';
+  resultPreview.innerHTML = html;
+}
+
+[selectPart, fromPart, wherePart, groupPart, tailPart].forEach(el => el.addEventListener('input', updatePreview));
+
+document.getElementById('checkBtn').addEventListener('click', () => {
+  const task = tasks[current];
+  const result = scoreAnswer(task);
+  feedback.className = 'feedback ' + result.level;
+  const notesHtml = result.notes.length ? '<div style="margin-top:8px;">' + result.notes.map(n => '• ' + n).join('<br>') + '</div>' : '';
+  feedback.innerHTML = `<strong>${result.title}</strong>${result.body}${notesHtml}`;
+  if (result.level === 'ok' || result.level === 'close') renderResult(task);
+});
+
+document.getElementById('solutionBtn').addEventListener('click', () => {
+  solution.textContent = tasks[current].solution;
+});
+
+document.getElementById('resultBtn').addEventListener('click', () => {
+  renderResult(tasks[current]);
+});
+
+renderNav();
+loadTask();
+updatePreview();
 </script>
 </body>
 </html>
