@@ -15,7 +15,7 @@ h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a;}
 .panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:20px;}
 .task-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;} .task-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--violet-dark);font-weight:700;cursor:pointer;}
 .task-btn.active{background:rgba(138,77,232,.10);} label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;}
-select,input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-size:15px;margin-bottom:12px;}
+select,input,textarea{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-size:15px;margin-bottom:12px;font-family:Arial,Helvetica,sans-serif;} textarea{min-height:96px;resize:vertical;line-height:1.5;white-space:pre-wrap;}
 button.action{display:inline-block;padding:11px 16px;border-radius:14px;border:none;cursor:pointer;font-weight:700;margin-right:8px;margin-top:6px;}
 .primary{background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;}
 .secondary{background:#fff;border:1px solid var(--border);color:var(--violet-dark);}
@@ -57,7 +57,9 @@ table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;} th,td
       <input id="groupPart" placeholder="Например: faculty" />
 
       <label>ORDER BY / LIMIT / JOIN-хвост</label>
-      <input id="tailPart" placeholder="Например: ORDER BY student_name LIMIT 5" />
+      <textarea id="tailPart" placeholder="Например:
+ORDER BY student_name
+LIMIT 5"></textarea>
 
       <div>
         <button class="action primary" id="checkBtn">Проверить</button>
@@ -97,6 +99,7 @@ FROM ...;</pre>
 </div>
 
 <script>
+
 const tasks = [{"id": 1, "title": "Задание 1. Имена студентов и коды групп", "desc": "Нужно вывести имена студентов и коды их групп из таблицы students.", "solution": "SELECT student_name, group_code\nFROM students\nORDER BY student_name\nLIMIT 5;", "checks": {"from": ["students"], "select": ["student_name", "group_code"], "tail": ["order by", "student_name", "limit", "5"], "forbid": ["join", "group by"]}, "preview": {"columns": ["student_name", "group_code"], "rows": [["Алина Воронова", "M3201"], ["Борис Крылов", "M3201"], ["Виктория Смирнова", "M3202"], ["Глеб Новиков", "M3202"], ["Дарья Лаврова", "M3301"]]}}, {"id": 2, "title": "Задание 2. Студенты одного факультета", "desc": "Нужно вывести имена студентов и факультеты только для факультета ФТМИ.", "solution": "SELECT student_name, faculty\nFROM students\nWHERE faculty = 'ФТМИ'\nORDER BY student_name;", "checks": {"from": ["students"], "select": ["student_name", "faculty"], "where": ["faculty", "фтми"], "tail": ["order by", "student_name"], "forbid": ["join", "group by"]}, "preview": {"columns": ["student_name", "faculty"], "rows": [["Алина Воронова", "ФТМИ"], ["Борис Крылов", "ФТМИ"], ["Виктория Смирнова", "ФТМИ"], ["Глеб Новиков", "ФТМИ"]]}}, {"id": 3, "title": "Задание 3. Сколько студентов на каждом факультете", "desc": "Нужно получить сводный ответ: количество студентов по факультетам.", "solution": "SELECT faculty, COUNT(*) AS students_count\nFROM students\nGROUP BY faculty\nORDER BY students_count DESC, faculty;", "checks": {"from": ["students"], "select": ["faculty", "count"], "group": ["faculty"], "tail": ["order by"], "forbid": ["join"]}, "preview": {"columns": ["faculty", "students_count"], "rows": [["ФЕН", 4], ["ФТМИ", 4], ["ФЦТ", 2]]}}, {"id": 4, "title": "Задание 4. Сколько результатов у каждого статуса", "desc": "Нужно посчитать, сколько записей в таблице results относится к каждому значению поля grade_status.", "solution": "SELECT grade_status, COUNT(*) AS results_count\nFROM results\nGROUP BY grade_status\nORDER BY results_count DESC, grade_status;", "checks": {"from": ["results"], "select": ["grade_status", "count"], "group": ["grade_status"], "tail": ["order by"], "forbid": ["join"]}, "preview": {"columns": ["grade_status", "results_count"], "rows": [["graded", 12], ["absent", 1], ["unknown", 1]]}}, {"id": 5, "title": "Задание 5. Мягкий мостик к JOIN", "desc": "Опционально: вывести имя студента, дисциплину и оценку для аттестованных результатов. Это уже пример следующего шага.", "solution": "SELECT s.student_name, d.discipline_name, r.grade_value\nFROM results r\nJOIN students s ON r.student_id = s.student_id\nJOIN disciplines d ON r.discipline_id = d.discipline_id\nWHERE r.grade_status = 'graded'\nORDER BY r.grade_value DESC, s.student_name\nLIMIT 5;", "checks": {"from": ["results"], "select": ["student_name", "discipline_name", "grade_value"], "mustAny": [["join students", "join disciplines"], ["grade_status", "graded"]], "tail": ["order by", "limit", "5"]}, "preview": {"columns": ["student_name", "discipline_name", "grade_value"], "rows": [["Алина Воронова", "Линейная алгебра", 5], ["Алина Воронова", "Базы данных", 5], ["Виктория Смирнова", "Линейная алгебра", 5], ["Виктория Смирнова", "Базы данных", 5], ["Жанна Полякова", "Математическая статистика", 5]]}}];
 
 let current = 0;
@@ -148,73 +151,108 @@ function resetInputs() {
   updatePreview();
 }
 
-function updatePreview() {
-  let sql = 'SELECT ' + (selectPart.value.trim() || '...') + '\n';
-  sql += 'FROM ' + (fromPart.value.trim() || '...');
-  if (wherePart.value.trim()) sql += '\nWHERE ' + wherePart.value.trim();
-  if (groupPart.value.trim()) sql += '\nGROUP BY ' + groupPart.value.trim();
-  if (tailPart.value.trim()) sql += '\n' + tailPart.value.trim();
+function sanitizeClause(text) {
+  return (text || '')
+    .replace(/\r/g, '')
+    .trim()
+    .replace(/[;\s]+$/g, '');
+}
+
+function buildSqlParts() {
+  return {
+    select: sanitizeClause(selectPart.value),
+    from: sanitizeClause(fromPart.value),
+    where: sanitizeClause(wherePart.value),
+    group: sanitizeClause(groupPart.value),
+    tail: sanitizeClause(tailPart.value)
+  };
+}
+
+function buildSql(parts) {
+  let sql = 'SELECT ' + (parts.select || '...') + '\n';
+  sql += 'FROM ' + (parts.from || '...');
+  if (parts.where) sql += '\nWHERE ' + parts.where;
+  if (parts.group) sql += '\nGROUP BY ' + parts.group;
+  if (parts.tail) sql += '\n' + parts.tail;
   sql += ';';
-  sqlPreview.textContent = sql;
+  return sql;
+}
+
+function normalizeSql(sql) {
+  return (sql || '')
+    .replace(/\r/g, '')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join('\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/;+(?=\n|$)/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+function updatePreview() {
+  sqlPreview.textContent = buildSql(buildSqlParts());
 }
 
 function textOfAllParts() {
-  return [
-    'select ' + selectPart.value,
-    'from ' + fromPart.value,
-    'where ' + wherePart.value,
-    'group by ' + groupPart.value,
-    tailPart.value
-  ].join(' ').toLowerCase();
+  const parts = buildSqlParts();
+  const chunks = [];
+  if (parts.select) chunks.push('select ' + parts.select);
+  if (parts.from) chunks.push('from ' + parts.from);
+  if (parts.where) chunks.push('where ' + parts.where);
+  if (parts.group) chunks.push('group by ' + parts.group);
+  if (parts.tail) chunks.push(parts.tail);
+  return chunks.join(' ').toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
 function countTokens(source, tokens) {
   if (!tokens || !tokens.length) return {hits:0, total:0};
   let hits = 0;
   tokens.forEach(token => {
-    if (source.includes(token.toLowerCase())) hits += 1;
+    if (source.includes(String(token).toLowerCase())) hits += 1;
   });
   return {hits, total: tokens.length};
 }
 
 function scoreAnswer(task) {
+  const userSql = buildSql(buildSqlParts());
+  const normalizedUserSql = normalizeSql(userSql);
+  const normalizedSolution = normalizeSql(task.solution);
+
+  if (normalizedUserSql === normalizedSolution) {
+    return {
+      level:'ok',
+      title:'Верно.',
+      body:'Ваш запрос совпадает с эталонным по структуре и содержанию.',
+      notes:[]
+    };
+  }
+
   const allText = textOfAllParts();
   let score = 0;
+  let maxScore = 0;
   const notes = [];
 
-  const fromScore = countTokens(allText, task.checks.from || []);
-  if (fromScore.total) {
-    score += (fromScore.hits / fromScore.total) * 20;
-    if (fromScore.hits < fromScore.total) notes.push('Проверьте таблицу в блоке FROM.');
+  function applySection(tokens, weight, message) {
+    const section = countTokens(allText, tokens || []);
+    if (section.total) {
+      maxScore += weight;
+      score += (section.hits / section.total) * weight;
+      if (section.hits < section.total && message) notes.push(message);
+    }
   }
 
-  const selectScore = countTokens(allText, task.checks.select || []);
-  if (selectScore.total) {
-    score += (selectScore.hits / selectScore.total) * 35;
-    if (selectScore.hits < selectScore.total) notes.push('В SELECT пока не хватает нужных полей или агрегатной функции.');
-  }
-
-  const whereScore = countTokens(allText, task.checks.where || []);
-  if (whereScore.total) {
-    score += (whereScore.hits / whereScore.total) * 15;
-    if (whereScore.hits < whereScore.total) notes.push('Условие WHERE ещё не соответствует задаче.');
-  }
-
-  const groupScore = countTokens(allText, task.checks.group || []);
-  if (groupScore.total) {
-    score += (groupScore.hits / groupScore.total) * 15;
-    if (groupScore.hits < groupScore.total) notes.push('Для сводного ответа ещё не хватает корректного GROUP BY.');
-  }
-
-  const tailScore = countTokens(allText, task.checks.tail || []);
-  if (tailScore.total) {
-    score += (tailScore.hits / tailScore.total) * 15;
-    if (tailScore.hits < tailScore.total) notes.push('Проверьте ORDER BY, LIMIT или хвост запроса.');
-  }
+  applySection(task.checks.from, 20, 'Проверьте таблицу в блоке FROM.');
+  applySection(task.checks.select, 35, 'В SELECT пока не хватает нужных полей или агрегатной функции.');
+  applySection(task.checks.where, 15, 'Условие WHERE ещё не соответствует задаче.');
+  applySection(task.checks.group, 15, 'Для сводного ответа ещё не хватает корректного GROUP BY.');
+  applySection(task.checks.tail, 15, 'Проверьте ORDER BY, LIMIT или хвост запроса.');
 
   if (task.checks.mustAny) {
     task.checks.mustAny.forEach(group => {
-      const ok = group.some(token => allText.includes(token.toLowerCase()));
+      maxScore += 10;
+      const ok = group.some(token => allText.includes(String(token).toLowerCase()));
       if (ok) score += 10;
       else notes.push('В запросе не хватает одного из обязательных смысловых фрагментов.');
     });
@@ -222,16 +260,18 @@ function scoreAnswer(task) {
 
   if (task.checks.forbid) {
     task.checks.forbid.forEach(token => {
-      if (allText.includes(token.toLowerCase())) {
+      if (allText.includes(String(token).toLowerCase())) {
         score -= 12;
-        notes.push(`Для этого задания оператор <code>${token.toUpperCase()}</code> не нужен.`);
+        notes.push(`Для этого задания оператор <code>${String(token).toUpperCase()}</code> не нужен.`);
       }
     });
   }
 
-  if (score >= 90) return {level:'ok', title:'Верно.', body:'Структура запроса соответствует задаче. Сравните свой вариант с эталоном и посмотрите ожидаемый результат на тестовой учебной БД.', notes};
-  if (score >= 70) return {level:'close', title:'Похоже на корректное решение.', body:'Основная логика уже на месте, но стоит ещё раз проверить детали записи, порядок операторов или полноту конструкции.', notes};
-  if (score >= 45) return {level:'partial', title:'Частично верно.', body:'Вы уже поймали часть логики запроса, но одной-двух важных частей пока не хватает.', notes};
+  const ratio = maxScore > 0 ? (score / maxScore) * 100 : 0;
+
+  if (ratio >= 92) return {level:'ok', title:'Верно.', body:'Структура запроса соответствует задаче. Сравните свой вариант с эталоном и посмотрите ожидаемый результат на тестовой учебной БД.', notes};
+  if (ratio >= 70) return {level:'close', title:'Похоже на корректное решение.', body:'Основная логика уже на месте, но стоит ещё раз проверить детали записи, порядок операторов или полноту конструкции.', notes};
+  if (ratio >= 45) return {level:'partial', title:'Частично верно.', body:'Вы уже поймали часть логики запроса, но одной-двух важных частей пока не хватает.', notes};
   return {level:'bad', title:'Пока не подходит.', body:'Запрос ещё не соответствует задаче. Попробуйте сначала определить, какие столбцы и какая таблица нужны для ответа.', notes};
 }
 
@@ -267,6 +307,7 @@ document.getElementById('resultBtn').addEventListener('click', () => {
 renderNav();
 loadTask();
 updatePreview();
+
 </script>
 </body>
 </html>
