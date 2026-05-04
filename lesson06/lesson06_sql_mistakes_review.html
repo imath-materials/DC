@@ -1,27 +1,149 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lesson 06 — разбор типовых ошибок</title>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 06 — типовые ошибки и эквивалентные формы SQL-запросов</title>
 <style>
-:root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;--green:#1d8f5a;--red:#c0392b}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.65;background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);color:var(--text)}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 40px}.hero,.card{background:#fff;border:1px solid var(--border);border-radius:24px;padding:24px 26px;box-shadow:0 6px 18px rgba(106,0,212,.05);margin-bottom:18px}
+:root{
+  --violet:#8a4de8; --violet-dark:#5f1ccf; --border:#eadcff; --text:#2b2b2b; --muted:#6f6290;
+  --bg1:#fcf9ff; --bg2:#f6f0ff; --good:#1d8f5a; --warn:#c0392b; --soft:#faf5ff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.65;color:var(--text);background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 44px}
+.hero{padding:28px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);box-shadow:0 8px 24px rgba(106,0,212,.07);margin-bottom:20px}
 .pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-h1,h2{color:#2a174a;margin-top:0} .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px} pre{white-space:pre-wrap;background:#faf5ff;border:1px solid var(--border);border-radius:16px;padding:14px;font-size:14px} .good{border-left:5px solid var(--green)} .bad{border-left:5px solid var(--red)} code{background:#f2eaff;padding:2px 6px;border-radius:6px;color:#5f1ccf}.quiz{margin-top:10px;padding:14px;border-radius:16px;background:#faf5ff;border:1px solid var(--border)} button{padding:10px 14px;border:none;border-radius:12px;background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;font-weight:700;cursor:pointer}.answer{margin-top:10px;color:#5f1ccf;font-weight:700;display:none}
+h1{margin:0 0 12px;font-size:36px;line-height:1.15;color:#2a174a}
+h2{margin:0 0 12px;font-size:24px;color:var(--violet-dark)}
+h3{margin:0 0 8px;font-size:18px;color:#2a174a}
+.lead{margin:0;max-width:960px;color:var(--muted);font-size:17px}
+.panel{background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 4px 14px rgba(106,0,212,.05);padding:22px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.case{border:1px solid var(--border);border-radius:20px;background:#fff;box-shadow:0 4px 14px rgba(106,0,212,.05);overflow:hidden}
+.case-head{padding:16px 18px;background:linear-gradient(180deg,#fcf9ff 0%,#f7f1ff 100%);border-bottom:1px solid var(--border)}
+.case-body{padding:18px}
+.label{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}
+.bad{background:rgba(192,57,43,.10);color:var(--warn)}
+.ok{background:rgba(29,143,90,.10);color:var(--good)}
+pre{white-space:pre-wrap;background:var(--soft);border:1px solid var(--border);border-radius:16px;padding:14px;font-size:14px;overflow:auto}
+code{background:#f2eaff;padding:2px 6px;border-radius:6px;color:#5f1ccf}
+.note{margin-top:14px;padding:14px 16px;border-left:5px solid var(--violet);background:#f6f0ff;color:#4c288f;border-radius:12px}
+.quiz{margin-top:14px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:var(--soft)}
+button{display:inline-block;padding:10px 14px;border-radius:12px;border:none;background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;font-weight:700;cursor:pointer}
+.answer{display:none;margin-top:10px;color:#4c288f;font-weight:700}
+.small{font-size:14px;color:var(--muted)}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
-</style></head><body><div class="wrap">
-<div class="hero"><div class="pill">Lesson 06 · старт пары</div><h1>Типовые ошибки и эквивалентные формы SQL-запросов</h1><p>Эта страница нужна для короткого разбора после лабораторной работы. Её задача — выровнять язык запросов перед переходом к большой внешней базе.</p></div>
-<div class="grid">
-<div class="card"><h2>1. JOIN и INNER JOIN</h2><div class="bad"><pre>SELECT ...
-FROM flights
-JOIN airports a ON ...</pre></div><div class="good"><pre>SELECT ...
-FROM flights
-INNER JOIN airports a ON ...</pre></div><p><strong>Ключевая мысль:</strong> <code>JOIN</code> и <code>INNER JOIN</code> — это одна и та же операция. Полная форма просто делает запись явной.</p></div>
-<div class="card"><h2>2. LEFT JOIN важен по смыслу</h2><p>Если нужно сохранить все строки из левой таблицы, даже когда справа пары нет, нужен <code>LEFT JOIN</code>.</p><pre>SELECT a.airport_code, f.flight_id
-FROM airports a
-LEFT JOIN flights f ON a.airport_code = f.departure_airport;</pre></div>
-<div class="card"><h2>3. Сортировка по умолчанию</h2><pre>ORDER BY amount</pre><p>Это то же самое, что <code>ORDER BY amount ASC</code>. Явно писать <code>ASC</code> необязательно. Явно стоит писать только <code>DESC</code>, если нужна обратная сортировка.</p></div>
-<div class="card"><h2>4. Сложные условия в WHERE</h2><pre>WHERE status = 'Departed'
-  AND actual_departure IS NOT NULL</pre><pre>WHERE fare_conditions IN ('Economy', 'Comfort')
-  AND amount BETWEEN 5000 AND 20000</pre><p>Важно не только знать операторы, но и аккуратно ставить скобки, если в условии есть и <code>AND</code>, и <code>OR</code>.</p></div>
-<div class="card"><h2>5. Алиасы и AS</h2><pre>SELECT COUNT(*) AS flights_count
-FROM flights f</pre><p><code>AS</code> делает названия столбцов читаемыми. Алиасы таблиц (<code>f</code>, <code>a</code>, <code>s</code>) нужны затем, чтобы длинный запрос оставался компактным.</p></div>
-<div class="card"><h2>6. Мини-вопрос</h2><div class="quiz"><p><strong>Какой оператор лучше подойдёт, если нужно сохранить все аэропорты, даже если из некоторых в рассматриваемый период не было вылетов?</strong></p><button onclick="document.getElementById('a1').style.display='block'">Показать ответ</button><div id="a1" class="answer">Нужен <code>LEFT JOIN</code>, если аэропорты стоят слева.</div></div></div>
-</div></div></body></html>
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="pill">Lesson 06 · старт пары</div>
+    <h1>Типовые ошибки и эквивалентные формы SQL-запросов</h1>
+    <p class="lead">Эта страница нужна для первого блока занятия. Её задача — быстро выровнять язык SQL после лабораторной работы: понять, какие формы записи действительно эквивалентны, а какие меняют смысл запроса или делают его менее надёжным.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Что здесь важно вынести</h2>
+    <div class="small">На этом шаге мы не ищем «единственный правильный стиль». Мы договариваемся о том, какие формы записи допустимы, какие конструкции полезно писать явно, а где ошибка уже меняет смысл ответа.</div>
+  </div>
+
+  <div class="grid">
+    <div class="case">
+      <div class="case-head"><h3>1. <code>JOIN</code> и <code>INNER JOIN</code></h3></div>
+      <div class="case-body">
+        <div class="label ok">Эквивалентно</div>
+<pre>SELECT ...
+FROM flights f
+JOIN airports_data a
+  ON f.departure_airport = a.airport_code;</pre>
+<pre>SELECT ...
+FROM flights f
+INNER JOIN airports_data a
+  ON f.departure_airport = a.airport_code;</pre>
+        <p>Обе записи означают одно и то же: взять только совпавшие строки из двух таблиц. Полная форма <code>INNER JOIN</code> просто делает смысл соединения явным.</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>2. Когда нужен <code>LEFT JOIN</code></h3></div>
+      <div class="case-body">
+        <div class="label ok">По смыслу задачи</div>
+<pre>SELECT a.airport_code, f.flight_id
+FROM airports_data a
+LEFT JOIN flights f
+  ON a.airport_code = f.departure_airport;</pre>
+        <p><code>LEFT JOIN</code> выбирают тогда, когда важно сохранить <strong>все строки из левой таблицы</strong>, даже если справа для части строк пары нет.</p>
+        <div class="note">Если вы хотите «сохранить все аэропорты, даже если вылетов не было», то без <code>LEFT JOIN</code> такую задачу не решить.</div>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>3. <code>RIGHT JOIN</code> и <code>FULL JOIN</code></h3></div>
+      <div class="case-body">
+        <div class="label bad">Важно понимать</div>
+        <p><code>RIGHT JOIN</code> полезно уметь читать, но на практике его часто проще переписать через <code>LEFT JOIN</code>, просто поменяв таблицы местами.</p>
+        <p><code>FULL JOIN</code> нужен реже: он сохраняет обе стороны даже без совпадений. Это полезная идея, но её стоит применять только тогда, когда задача действительно требует «объединить всё с обеих сторон».</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>4. Сортировка по умолчанию</h3></div>
+      <div class="case-body">
+        <div class="label ok">Эквивалентно</div>
+<pre>ORDER BY total_amount</pre>
+<pre>ORDER BY total_amount ASC</pre>
+        <p>По умолчанию <code>ORDER BY</code> уже означает сортировку по возрастанию. Поэтому <code>ASC</code> можно не писать. Явно чаще указывают именно <code>DESC</code>, если нужен обратный порядок.</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>5. Несколько способов задать условие</h3></div>
+      <div class="case-body">
+        <div class="label ok">Эквивалентно</div>
+<pre>WHERE city IN ('Москва', 'Санкт-Петербург')</pre>
+<pre>WHERE city = 'Москва'
+   OR city = 'Санкт-Петербург'</pre>
+        <p>Обе записи допустимы. Вариант через <code>IN</code> обычно короче и лучше читается, когда речь идёт о наборе конкретных значений.</p>
+        <div class="note">Если в условии смешиваются <code>AND</code> и <code>OR</code>, не экономьте на скобках: они помогают не потерять смысл запроса.</div>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>6. Проверка пустых значений</h3></div>
+      <div class="case-body">
+        <div class="label bad">Неэквивалентно</div>
+<pre>WHERE actual_arrival = NULL</pre>
+        <div class="label ok" style="margin-top:8px;">Правильно</div>
+<pre>WHERE actual_arrival IS NULL</pre>
+        <p>Сравнение с <code>NULL</code> через знак равенства не работает так, как обычное сравнение. Для пустых значений используются формы <code>IS NULL</code> и <code>IS NOT NULL</code>.</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>7. Алиасы и <code>AS</code></h3></div>
+      <div class="case-body">
+        <div class="label ok">Эквивалентно</div>
+<pre>SELECT COUNT(*) AS flights_count
+FROM flights f</pre>
+<pre>SELECT COUNT(*) flights_count
+FROM flights f</pre>
+        <p>Обе записи допустимы, но явное <code>AS</code> делает запрос прозрачнее, особенно в длинных агрегационных задачах.</p>
+      </div>
+    </div>
+
+    <div class="case">
+      <div class="case-head"><h3>8. Мини-вопрос</h3></div>
+      <div class="case-body">
+        <div class="quiz">
+          <p><strong>Какой тип соединения нужен, если требуется сохранить все аэропорты, даже когда в рассматриваемый период из части из них не было вылетов?</strong></p>
+          <button onclick="document.getElementById('ans-join').style.display='block'">Показать ответ</button>
+          <div id="ans-join" class="answer">Нужен <code>LEFT JOIN</code>, если таблица аэропортов стоит слева.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
