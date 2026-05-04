@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lesson 06 — разбор типовых ошибок</title>
+<style>
+:root{--violet:#8a4de8;--violet-dark:#5f1ccf;--border:#eadcff;--text:#2b2b2b;--muted:#6f6290;--green:#1d8f5a;--red:#c0392b}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.65;background:linear-gradient(180deg,#fcf9ff 0%,#f6f0ff 100%);color:var(--text)}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 40px}.hero,.card{background:#fff;border:1px solid var(--border);border-radius:24px;padding:24px 26px;box-shadow:0 6px 18px rgba(106,0,212,.05);margin-bottom:18px}
+.pill{display:inline-block;margin-bottom:10px;padding:6px 12px;border-radius:999px;background:rgba(138,77,232,.10);border:1px solid rgba(138,77,232,.14);color:var(--violet);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+h1,h2{color:#2a174a;margin-top:0} .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px} pre{white-space:pre-wrap;background:#faf5ff;border:1px solid var(--border);border-radius:16px;padding:14px;font-size:14px} .good{border-left:5px solid var(--green)} .bad{border-left:5px solid var(--red)} code{background:#f2eaff;padding:2px 6px;border-radius:6px;color:#5f1ccf}.quiz{margin-top:10px;padding:14px;border-radius:16px;background:#faf5ff;border:1px solid var(--border)} button{padding:10px 14px;border:none;border-radius:12px;background:linear-gradient(135deg,#8a4de8 0%,#5f1ccf 100%);color:#fff;font-weight:700;cursor:pointer}.answer{margin-top:10px;color:#5f1ccf;font-weight:700;display:none}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<div class="hero"><div class="pill">Lesson 06 · старт пары</div><h1>Типовые ошибки и эквивалентные формы SQL-запросов</h1><p>Эта страница нужна для короткого разбора после лабораторной работы. Её задача — выровнять язык запросов перед переходом к большой внешней базе.</p></div>
+<div class="grid">
+<div class="card"><h2>1. JOIN и INNER JOIN</h2><div class="bad"><pre>SELECT ...
+FROM flights
+JOIN airports a ON ...</pre></div><div class="good"><pre>SELECT ...
+FROM flights
+INNER JOIN airports a ON ...</pre></div><p><strong>Ключевая мысль:</strong> <code>JOIN</code> и <code>INNER JOIN</code> — это одна и та же операция. Полная форма просто делает запись явной.</p></div>
+<div class="card"><h2>2. LEFT JOIN важен по смыслу</h2><p>Если нужно сохранить все строки из левой таблицы, даже когда справа пары нет, нужен <code>LEFT JOIN</code>.</p><pre>SELECT a.airport_code, f.flight_id
+FROM airports a
+LEFT JOIN flights f ON a.airport_code = f.departure_airport;</pre></div>
+<div class="card"><h2>3. Сортировка по умолчанию</h2><pre>ORDER BY amount</pre><p>Это то же самое, что <code>ORDER BY amount ASC</code>. Явно писать <code>ASC</code> необязательно. Явно стоит писать только <code>DESC</code>, если нужна обратная сортировка.</p></div>
+<div class="card"><h2>4. Сложные условия в WHERE</h2><pre>WHERE status = 'Departed'
+  AND actual_departure IS NOT NULL</pre><pre>WHERE fare_conditions IN ('Economy', 'Comfort')
+  AND amount BETWEEN 5000 AND 20000</pre><p>Важно не только знать операторы, но и аккуратно ставить скобки, если в условии есть и <code>AND</code>, и <code>OR</code>.</p></div>
+<div class="card"><h2>5. Алиасы и AS</h2><pre>SELECT COUNT(*) AS flights_count
+FROM flights f</pre><p><code>AS</code> делает названия столбцов читаемыми. Алиасы таблиц (<code>f</code>, <code>a</code>, <code>s</code>) нужны затем, чтобы длинный запрос оставался компактным.</p></div>
+<div class="card"><h2>6. Мини-вопрос</h2><div class="quiz"><p><strong>Какой оператор лучше подойдёт, если нужно сохранить все аэропорты, даже если из некоторых в рассматриваемый период не было вылетов?</strong></p><button onclick="document.getElementById('a1').style.display='block'">Показать ответ</button><div id="a1" class="answer">Нужен <code>LEFT JOIN</code>, если аэропорты стоят слева.</div></div></div>
+</div></div></body></html>
