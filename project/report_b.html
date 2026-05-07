@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>Образец проекта — трек B</title><style>
+@page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+:root{
+  --ink:#222222; --muted:#5f5a73; --accent:#6a3bd2; --accent2:#8f6cff;
+  --soft:#f7f3ff; --soft2:#f1ecff; --line:#e5dcfb; --ok:#1f7a4c;
+}
+*{box-sizing:border-box}
+body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.58;margin:0;background:#ffffff}
+.wrap{max-width:920px;margin:0 auto;padding:22px 18px 30px}
+.cover{padding:28px 30px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,#fbf9ff 0%,#f4efff 100%);box-shadow:0 10px 30px rgba(106,59,210,.08)}
+.pill{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(106,59,210,.09);border:1px solid rgba(106,59,210,.12);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+h1{margin:0 0 10px;font-size:34px;line-height:1.15;color:#2f1d62}
+h2{margin:26px 0 12px;font-size:24px;color:#41257f}
+h3{margin:18px 0 10px;font-size:18px;color:#51319b}
+.lead{font-size:17px;color:var(--muted);max-width:800px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px 18px;margin:12px 0;box-shadow:0 4px 16px rgba(106,59,210,.05)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+table{width:100%;border-collapse:collapse;margin:10px 0 16px}
+th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top}
+th{background:#f2ecff;text-align:left;color:#2f1d62}
+.kv td:first-child{width:34%;font-weight:700;background:#faf8ff;color:#4d2f96}
+.note{padding:12px 14px;border-left:4px solid var(--accent);background:#f8f4ff;border-radius:12px;color:#4e2f97}
+ul{margin:8px 0 8px 20px}
+.figure{margin:14px 0 18px;page-break-inside:avoid}
+.figure img{width:100%;border:1px solid var(--line);border-radius:18px}
+.caption{font-size:12px;color:var(--muted);margin-top:6px}
+.small{font-size:12px;color:var(--muted)}
+.pagebreak{page-break-before:always}
+.footer{margin-top:26px;font-size:12px;color:var(--muted)}
+</style></head><body><div class="wrap">
+<div class="cover">
+<div class="pill">Итоговый проект · Трек Б</div>
+<h1>Анализ данных о чаевых в ресторане</h1>
+<p class="lead">Этот образец показывает, как может быть оформлен проект по анализу данных: от постановки гипотезы и подготовки набора до визуализации результатов и содержательных выводов.</p>
+<table class="kv">
+<tr><td>Название проекта</td><td>Факторы, влияющие на долю чаевых в ресторанных чеках</td></tr>
+<tr><td>Автор</td><td>Образец оформления</td></tr>
+<tr><td>Тип проекта</td><td>Трек Б. Анализ данных</td></tr>
+<tr><td>Источник данных</td><td>Учебный набор <code>tips</code></td></tr>
+<tr><td>Объём данных</td><td>244 наблюдения, 10 признаков после подготовки</td></tr>
+<tr><td>Инструменты</td><td>Pandas, Matplotlib, Jupyter Notebook</td></tr>
+</table>
+</div>
+
+<h2>1. Постановка задачи и гипотеза</h2>
+<div class="card">
+<p>Проект посвящён анализу чаевых в ресторане. Основная исследовательская задача состоит в том, чтобы понять, какие признаки связаны с долей чаевых: размер счёта, время посещения, размер компании и признак курения.</p>
+<p>Рабочая гипотеза проекта сформулирована так: <strong>в небольших компаниях доля чаевых в среднем выше, чем в более крупных</strong>. Дополнительно рассматриваются различия между обедом и ужином, а также между группами курящих и некурящих гостей.</p>
+<div class="note">В рамках проекта анализируется именно <strong>доля чаевых</strong>, а не абсолютная сумма. Это позволяет корректнее сравнивать чеки разного размера.</div>
+</div>
+
+<h2>2. Подготовка данных</h2>
+<div class="card">
+<ul>
+<li>исходный набор содержал данные о сумме счёта, чаевых, времени посещения, размере компании и нескольких категориальных признаках;</li>
+<li>для анализа была рассчитана новая переменная <strong>tip_percent</strong> — доля чаевых в процентах;</li>
+<li>добавлен признак <strong>size_group</strong>, чтобы сравнивать небольшие, средние и крупные компании;</li>
+<li>добавлен бинарный признак <strong>weekend</strong>, отделяющий выходные от будней.</li>
+</ul>
+<p>После подготовки набор сохранил 244 наблюдения и стал удобнее для интерпретации и построения визуализаций.</p>
+</div>
+
+<h2>3. Описательная статистика</h2>
+<div class="card">
+<table>
+<tr><th>Показатель</th><th>Значение</th></tr>
+<tr><td>Средняя доля чаевых</td><td>16,08%</td></tr>
+<tr><td>Медианная доля чаевых</td><td>15,48%</td></tr>
+<tr><td>Минимальное значение</td><td>3,56%</td></tr>
+<tr><td>Максимальное значение</td><td>71,03%</td></tr>
+<tr><td>Число наблюдений</td><td>244</td></tr>
+</table>
+<p>Среднее значение чуть выше медианы, что указывает на умеренную правостороннюю асимметрию: в наборе есть несколько наблюдений с заметно более высокой долей чаевых.</p>
+</div>
+
+<h2>4. Ключевые сравнительные результаты</h2>
+<div class="grid2">
+<div class="card">
+<h3>По времени посещения</h3>
+<table>
+<tr><th>Время</th><th>Средняя доля чаевых</th></tr>
+<tr><td>Dinner</td><td>15,95%</td></tr><tr><td>Lunch</td><td>16,41%</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>По признаку курения</h3>
+<table>
+<tr><th>Группа</th><th>Средняя доля чаевых</th></tr>
+<tr><td>No</td><td>15,93%</td></tr><tr><td>Yes</td><td>16,32%</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>По размеру компании</h3>
+<table>
+<tr><th>Размер группы</th><th>Средняя доля чаевых</th></tr>
+<tr><td>1-2</td><td>16,70%</td></tr><tr><td>3-4</td><td>14,91%</td></tr><tr><td>5+</td><td>14,80%</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>По типу дня</h3>
+<table>
+<tr><th>Период</th><th>Средняя доля чаевых</th></tr>
+<tr><td>Weekday</td><td>16,33%</td></tr><tr><td>Weekend</td><td>15,96%</td></tr>
+</table>
+</div>
+</div>
+
+<h2>5. Визуализация</h2>
+<div class="figure"><img src="figures/scatter_bill_tip_percent.png" alt="Связь счёта и чаевых"><div class="caption">Рисунок 1. Связь между суммой счёта и долей чаевых.</div></div>
+<div class="figure"><img src="figures/avg_tip_by_time.png" alt="Чаевые по времени"><div class="caption">Рисунок 2. Средняя доля чаевых в разрезе времени посещения.</div></div>
+<div class="figure"><img src="figures/avg_tip_by_smoker.png" alt="Чаевые по курению"><div class="caption">Рисунок 3. Средняя доля чаевых в группах курящих и некурящих.</div></div>
+<div class="figure"><img src="figures/avg_tip_by_size_group.png" alt="Чаевые по размеру компании"><div class="caption">Рисунок 4. Средняя доля чаевых в зависимости от размера компании.</div></div>
+
+<h2>6. Интерпретация результатов</h2>
+<div class="card">
+<p>Самый заметный результат проекта связан с размером компании. Для групп из 1–2 человек средняя доля чаевых составляет 16,70%, тогда как для групп из 3–4 человек — 14,91%, а для компаний 5+ — 14,80%.</p>
+<p>Различия по времени посещения и по признаку курения значительно слабее: средняя доля чаевых в обед и вечером различается менее чем на один процентный пункт, а разница между курящими и некурящими также остаётся небольшой.</p>
+<p>Это позволяет считать рабочую гипотезу частично подтверждённой: наиболее устойчивое различие в наборе связано не с временем и не с курением, а именно с размером компании.</p>
+</div>
+
+<h2>7. Выводы</h2>
+<div class="card">
+<ul>
+<li>Средняя доля чаевых по набору составляет 16,08%, медианная — 15,48%.</li>
+<li>Наиболее выраженное различие наблюдается по размеру компании: небольшие компании оставляют большую долю чаевых.</li>
+<li>Различия между обедом и ужином, а также между курящими и некурящими, в данном наборе выражены слабее.</li>
+<li>Набор хорошо подходит для учебного проекта: он достаточно компактен, но позволяет сформулировать гипотезу, подготовить данные и получить внятные визуальные результаты.</li>
+</ul>
+</div>
+
+<div class="footer">Санкт-Петербург, 2026</div>
+</div>
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+  parent.postMessage({ type: 'lesson06', height }, '*');
+}
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
+</body></html>
