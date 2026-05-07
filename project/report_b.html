@@ -129,4 +129,19 @@ ul{margin:8px 0 8px 20px}
 </div>
 
 <div class="footer">Санкт-Петербург, 2026</div>
-</div></body></html>
+</div>
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+  parent.postMessage({ type: 'report_b', height }, '*');
+}
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
+
+
+</body></html>

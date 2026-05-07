@@ -137,7 +137,7 @@ ul{margin:8px 0 8px 20px}
 <script>
 function sendHeight() {
   const height = document.documentElement.scrollHeight || document.body.scrollHeight;
-  parent.postMessage({ type: 'lesson06', height }, '*');
+  parent.postMessage({ type: 'report_a', height }, '*');
 }
 
 window.addEventListener('load', sendHeight);
