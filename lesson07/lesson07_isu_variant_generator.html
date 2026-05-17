@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 07 · Генератор варианта по ИСУ</title>
+<style>
+  body{margin:0;background:#fbf8ff;color:#28233a;font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px}
+  .hero{border:1px solid #eadcff;border-radius:26px;padding:28px;background:linear-gradient(135deg,#fff 0%,#f7f1ff 100%);box-shadow:0 10px 26px rgba(95,28,207,.08)}
+  h1{margin:0 0 10px;color:#2a174a;font-size:34px;line-height:1.15} h2{color:#5f1ccf;margin:22px 0 10px} h3{margin:0 0 12px;color:#5f1ccf;font-size:22px;letter-spacing:.05em}
+  .badge{display:inline-block;border-radius:999px;background:rgba(138,77,232,.11);border:1px solid rgba(138,77,232,.16);color:#7a36db;font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;margin-bottom:12px}
+  .card{background:#fff;border:1px solid #eadcff;border-radius:22px;padding:22px;margin:16px 0;box-shadow:0 6px 18px rgba(95,28,207,.05)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.mini{padding:18px;border-radius:18px;background:#fff;border:1px solid #eadcff}.mini strong{color:#5f1ccf}
+  .prompt-card{min-height:330px;border-radius:26px;background:#fff;border:1px solid #eadcff;padding:28px 30px;box-shadow:0 8px 20px rgba(95,28,207,.04);font-size:18px;line-height:1.55}.prompt-card p{margin:0 0 18px}.prompt-card.poor{border-left:6px solid #d9469a}.prompt-card.mid{border-left:6px solid #c27803}.prompt-card.good{border-left:6px solid #6d28d9}
+  input{font-size:20px;padding:13px 15px;border:1px solid #d9c9fb;border-radius:14px;width:210px;max-width:100%;outline:none}button{cursor:pointer;border:0;border-radius:14px;background:linear-gradient(135deg,#8a4de8,#5f1ccf);color:white;font-weight:700;padding:14px 18px;font-size:16px;margin-left:8px}
+  .error{color:#b42318;font-weight:700;margin-top:10px}.ok{border-left:5px solid #8a4de8}.muted{color:#6f6290}.tag{display:inline-block;background:#f2eaff;color:#5f1ccf;border:1px solid #e1d2ff;border-radius:999px;padding:5px 10px;margin:3px;font-size:13px;font-weight:700}
+  pre{white-space:pre-wrap;background:#211733;color:#fff;border-radius:16px;padding:16px;overflow:auto}.copy{background:#fff;color:#5f1ccf;border:1px solid #d9c9fb;margin:8px 0 0;padding:10px 14px}
+  table{border-collapse:collapse;width:100%;background:#fff}td,th{border:1px solid #eadcff;padding:10px;vertical-align:top}th{background:#f7f1ff;color:#5f1ccf;text-align:left}.compact li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="badge">Занятие 7 · вариант по ИСУ</div>
+    <h1>Генератор задания: ИИ-инструменты, промпт и аналитическая ловушка</h1>
+    <p class="muted">Введите номер ИСУ из 6 цифр. Генератор выдаст пару ИИ-инструментов для сравнения, стартовый промпт и фокус ручной проверки. Вариант зависит только от номера ИСУ и не привязан к группе.</p>
+    <div><input id="isu" inputmode="numeric" maxlength="6" placeholder="123456"><button onclick="makeVariant()">Получить вариант</button></div>
+    <div id="err" class="error"></div>
+  </div>
+
+  <div class="card">
+    <h2>Почему промпт имеет значение</h2>
+    <div class="grid">
+      <div class="prompt-card poor">
+        <h3>Плохой</h3>
+        <p>«Проанализируй данные и скажи, что важно».</p>
+        <p>Риск: общий пересказ, нет проверки качества данных, нет числовых оснований.</p>
+      </div>
+      <div class="prompt-card mid">
+        <h3>Средний</h3>
+        <p>«Опиши структуру, найди тренды, предложи график».</p>
+        <p>Уже лучше, но ИИ всё ещё может пропустить ловушки и сделать слишком сильные выводы.</p>
+      </div>
+      <div class="prompt-card good">
+        <h3>Сильный</h3>
+        <p>Просит проверить типы, пропуски, метрики, группировки, ограничения и ручную проверку.</p>
+        <p>Это не гарантирует идеальный ответ, но резко снижает риск красивой ошибки.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="out"></div>
+</div>
+<script>
+const tools = [
+  {name:'Алиса AI', role:'быстрый пользовательский анализ файла и первичные выводы'},
+  {name:'GigaChat', role:'российский чат-инструмент для сравнения интерпретаций и автоматического комментария'},
+  {name:'Qwen', role:'open-weight / мультимодельный контур, полезен для сравнения логики ответа'},
+  {name:'Perplexity', role:'инструмент для поиска, объяснения и аналитического черновика'},
+  {name:'DeepSeek', role:'чат-модель для аналитического рассуждения и проверки гипотез'},
+  {name:'Z.ai', role:'чат-инструмент, который может быстро собрать черновик отчёта'}
+];
+const prompts = [
+  {level:'Плохой стартовый промпт', text:'Проанализируй этот датасет и скажи, что в нём важно.', task:'Ваша задача — показать, почему такой промпт опасен: какие выводы получаются слишком общими, какие числа не проверены, где ИИ может уверенно ошибиться.'},
+  {level:'Средний стартовый промпт', text:'Опиши структуру данных, найди основные тренды, сравни каналы продаж и предложи 2–3 вывода.', task:'Ваша задача — усилить промпт: добавить проверку пропусков, относительных метрик, группировок и ограничений анализа.'},
+  {level:'Сильный стартовый промпт', text:'Проанализируй данные как аналитик. Сначала проверь столбцы, типы данных, пропуски и аномалии. Затем отдельно посчитай абсолютные и относительные метрики. Сравни каналы продаж в целом и внутри регионов. Не делай причинных выводов без проверки. Для каждого вывода укажи числа, на которых он основан, и ограничения анализа.', task:'Ваша задача — проверить, выдерживает ли даже сильный промпт ручной аудит: совпадают ли числа, замечены ли ловушки, нет ли чрезмерных выводов.'}
+];
+const traps = [
+  {name:'Парадокс агрегирования', hint:'В целом маркетплейс может выглядеть лучше по конверсии, но внутри каждого региона собственный интернет-магазин показывает более высокую конверсию.', check:'Сравните conversion_rate по channel, а затем по region + channel.'},
+  {name:'Абсолютные и относительные показатели', hint:'Большая выручка не означает лучшую эффективность: нужны конверсия, средний чек, выручка на посетителя.', check:'Сравните revenue_rub, revenue_per_visitor и revenue_per_order.'},
+  {name:'Пропуски в возвратах', hint:'В части строк returns_count пустой. Если считать их нулями, вывод по возвратам будет искажён.', check:'Посчитайте долю пропусков в returns_count и сравните return_rate только по строкам с известными возвратами.'},
+  {name:'Корреляция рекламы и выручки', hint:'ad_spend_rub и revenue_rub могут расти вместе, но это не доказывает причинный эффект рекламы.', check:'Проверьте связь по месяцам, регионам и promo_flag, не формулируя причинный вывод без эксперимента.'},
+  {name:'Промо-месяцы', hint:'Март и июнь отмечены promo_flag = да. Выводы по периоду могут быть неустойчивыми.', check:'Сравните месяцы с promo_flag = да и promo_flag = нет отдельно.'},
+  {name:'Красивый отчёт без проверки чисел', hint:'ИИ может написать связный отчёт, но не показать расчёты, на которых держатся выводы.', check:'Для каждого вывода найдите подтверждающую таблицу или пересчитайте показатель вручную.'}
+];
+function sumDigits(s){return s.split('').reduce((a,b)=>a+Number(b),0)}
+function makeVariant(){
+  const isu = document.getElementById('isu').value.trim();
+  const err = document.getElementById('err');
+  const out = document.getElementById('out');
+  err.textContent=''; out.innerHTML='';
+  if(!/^\d{6}$/.test(isu)){err.textContent='Введите ровно 6 цифр номера ИСУ.'; return;}
+  const n = Number(isu); const sd = sumDigits(isu);
+  const primary = n % tools.length;
+  let secondary = (primary + 1 + (sd % (tools.length-1))) % tools.length;
+  if(secondary === primary){ secondary = (secondary + 1) % tools.length; }
+  const prompt = prompts[sd % prompts.length];
+  const trapIndex = (Math.floor(n/10) + sd) % traps.length;
+  const trap = traps[trapIndex];
+  const variant = (primary+1) + '' + (secondary+1) + '-' + ((sd % prompts.length)+1) + '-' + (trapIndex+1);
+  const improved = `Проанализируй файл lesson07_ai_trap_sales.csv как аналитик. Сначала опиши реальные столбцы и проверь качество данных: типы, пропуски, дубликаты, подозрительные значения. Затем посчитай метрики visitors, orders, revenue_rub, conversion_rate = orders / visitors, revenue_per_order = revenue_rub / orders, revenue_per_visitor = revenue_rub / visitors. Сравни каналы продаж в целом и отдельно внутри каждого региона. Отдельно проверь returns_count: не считай пропуски нулями без объяснения. Не делай причинных выводов о влиянии рекламы без дополнительной проверки. Для каждого вывода покажи числа или таблицу, на которых он основан. В конце перечисли ограничения анализа и 3 вывода, которые нужно проверить вручную.`;
+  out.innerHTML = `
+  <div class="card ok">
+    <h2>Ваш вариант: ${variant}</h2>
+    <div class="grid">
+      <div class="mini"><strong>Основной инструмент</strong><br>${tools[primary].name}<br><span class="muted">${tools[primary].role}</span></div>
+      <div class="mini"><strong>Инструмент для сравнения</strong><br>${tools[secondary].name}<br><span class="muted">${tools[secondary].role}</span></div>
+      <div class="mini"><strong>Стартовый промпт</strong><br>${prompt.level}</div>
+      <div class="mini"><strong>Фокус проверки</strong><br>${trap.name}</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Что нужно сделать</h2>
+    <p><span class="tag">1. Датасет</span><span class="tag">2. Два ИИ-инструмента</span><span class="tag">3. Стартовый промпт</span><span class="tag">4. Улучшенный промпт</span><span class="tag">5. Ручная проверка</span></p>
+    <ol>
+      <li>Загрузите датасет <strong>lesson07_ai_trap_sales.csv</strong> в оба назначенных инструмента.</li>
+      <li>Сначала используйте стартовый промпт из вашего варианта.</li>
+      <li>Затем используйте улучшенный промпт ниже.</li>
+      <li>Сравните ответы двух ИИ-инструментов.</li>
+      <li>Ручной проверкой докажите минимум одну ошибку, слабое место или неполный вывод ИИ.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>${prompt.level}</h2>
+    <pre>${prompt.text}</pre>
+    <p><strong>Комментарий к заданию:</strong> ${prompt.task}</p>
+  </div>
+  <div class="card">
+    <h2>Улучшенный промпт для второго прогона</h2>
+    <pre>${improved}</pre>
+  </div>
+  <div class="card">
+    <h2>Ваша аналитическая ловушка</h2>
+    <table><tr><th>Фокус</th><td>${trap.name}</td></tr><tr><th>Подсказка</th><td>${trap.hint}</td></tr><tr><th>Ручная проверка</th><td>${trap.check}</td></tr></table>
+  </div>
+  <div class="card">
+    <h2>🚩🚩🚩 На что обратить внимание</h2>
+    <ul class="compact">
+      <li>ИИ делает причинный вывод: «реклама увеличила продажи», но не показывает проверку.</li>
+      <li>ИИ сравнивает выручку, но не считает относительные показатели.</li>
+      <li>ИИ не замечает пропуски в returns_count.</li>
+      <li>ИИ пишет «канал лучше», но не проверяет разбиение по регионам.</li>
+      <li>ИИ даёт отчёт без таблиц, формул и числовых оснований.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Что кратко указать в отчёте</h2>
+    <ul class="compact">
+      <li>номер ИСУ и номер варианта;</li>
+      <li>два назначенных ИИ-инструмента;</li>
+      <li>какой стартовый промпт использовался и как он был улучшен;</li>
+      <li>в чём ответы инструментов совпали и где разошлись;</li>
+      <li>один вывод ИИ, который вы проверили вручную, и расчёт, на котором основана проверка;</li>
+      <li>итог: какому ответу можно доверять больше и почему.</li>
+    </ul>
+  </div>`;
+}
+</script>
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+  parent.postMessage({ type: 'lesson07_generator', height }, '*');
+}
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
+</body>
+</html>

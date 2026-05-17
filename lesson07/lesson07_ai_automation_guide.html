@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ИИ-автоматизация: данные → автоматизация → ИИ → результат</title>
+  <style>
+    :root {
+      --violet: #8a4de8;
+      --violet-dark: #5f1ccf;
+      --violet-deep: #2a174a;
+      --pink: #d9359f;
+      --orange: #d98900;
+      --border: #eadcff;
+      --text: #2b2b2b;
+      --muted: #6f6290;
+      --bg1: #fcf9ff;
+      --bg2: #f6f0ff;
+      --card: #ffffff;
+      --soft: #f6f0ff;
+      --soft-2: #fcf9ff;
+      --warn: #fff6ea;
+      --warn-line: #ffd8a8;
+      --ok: #f2fff5;
+      --ok-line: #bfe7c8;
+      --danger: #fff0f3;
+      --danger-line: #ffb6c6;
+      --shadow: 0 10px 28px rgba(106, 0, 212, 0.07);
+      --radius: 24px;
+      --radius-sm: 18px;
+      --page: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(138,77,232,.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,120,182,.08), transparent 24%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      line-height: 1.65;
+    }
+
+    .page {
+      width: min(calc(100% - 32px), var(--page));
+      margin: 24px auto 40px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      padding: 34px 34px 30px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.10);
+    }
+
+    .hero::before {
+      width: 360px;
+      height: 360px;
+      top: -120px;
+      right: -80px;
+    }
+
+    .hero::after {
+      width: 200px;
+      height: 200px;
+      right: 180px;
+      bottom: -90px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.5vw, 48px);
+      line-height: 1.08;
+      max-width: 950px;
+      position: relative;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 920px;
+      font-size: 18px;
+      color: rgba(255,255,255,.93);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform .15s ease, opacity .15s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn:hover { transform: translateY(-1px); opacity: .97; }
+    .btn-primary { background: #fff; color: var(--violet-dark); border-color: rgba(255,255,255,.2); }
+    .btn-secondary { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.22); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 22px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    .panel,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      position: sticky;
+      top: 18px;
+      padding: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #fcf9ff 100%);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      line-height: 1.15;
+      color: var(--violet-deep);
+    }
+
+    .nav { display: grid; gap: 8px; }
+    .nav a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: var(--text);
+      text-decoration: none;
+      background: #fcf9ff;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .nav a:hover { background: #f6f0ff; border-color: #d8c6fb; color: var(--violet-dark); }
+
+    .panel-note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: #4c288f;
+      font-size: 14px;
+    }
+
+    .content { display: grid; gap: 18px; }
+
+    .card {
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(180deg, #ffffff 0%, #fcf9ff 100%);
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -70px -70px auto;
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, rgba(138,77,232,.08), rgba(255,120,182,.08));
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .card > * { position: relative; z-index: 1; }
+    .card h2 { margin: 0 0 10px; font-size: 26px; line-height: 1.12; color: var(--violet-deep); }
+    .card h3 { margin: 18px 0 8px; font-size: 20px; line-height: 1.2; color: var(--violet-dark); }
+    .card h4 { margin: 0 0 8px; font-size: 17px; color: var(--violet-deep); }
+    .muted { color: var(--muted); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+    .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+    .fact {
+      background: linear-gradient(180deg, #ffffff 0%, #fbf7ff 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .fact-label { display: block; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px; }
+    .fact-value { font-size: 17px; font-weight: 800; color: var(--violet-deep); word-break: break-word; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(106, 0, 212, .16);
+    }
+
+    .step-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+    .step-head p { margin: 4px 0 0; color: var(--muted); }
+
+    .list,
+    .steps { margin: 0; padding-left: 20px; }
+    .list li,
+    .steps li { margin: 8px 0; }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: #4c288f;
+      font-size: 15px;
+    }
+    .note.warn { background: var(--warn); border-color: var(--warn-line); color: #8a4d10; }
+    .note.ok { background: var(--ok); border-color: var(--ok-line); color: #166534; }
+    .note.danger { background: var(--danger); border-color: var(--danger-line); color: #8f1232; }
+
+    .media {
+      margin-top: 16px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #fcf9ff;
+    }
+    .media img { display: block; width: 100%; height: auto; }
+
+    .placeholder {
+      min-height: 230px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      border: 2px dashed #d8c6fb;
+      background: repeating-linear-gradient(45deg, #fcf9ff, #fcf9ff 12px, #f7f0ff 12px, #f7f0ff 24px);
+      color: var(--muted);
+      text-align: center;
+    }
+    .placeholder strong { display:block; color: var(--violet-deep); font-size: 18px; margin-bottom: 6px; }
+    .placeholder span { display:block; max-width: 620px; margin: 0 auto; }
+
+    .code {
+      margin-top: 14px;
+      background: var(--violet-deep);
+      color: #f8f5ff;
+      padding: 16px 18px;
+      border-radius: 16px;
+      font-size: 15px;
+      overflow-x: auto;
+      line-height: 1.5;
+      border: 1px solid rgba(138,77,232,.18);
+      white-space: pre-wrap;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(138,77,232,.10);
+      border: 1px solid rgba(138,77,232,.14);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--violet-dark);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .flow-item {
+      min-height: 130px;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #fff;
+      position: relative;
+    }
+    .flow-item::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--violet-dark);
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .flow-item:last-child::after { display: none; }
+    .flow-title { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 800; letter-spacing: .04em; }
+    .flow-main { margin-top: 8px; font-size: 18px; color: var(--violet-deep); font-weight: 800; }
+    .flow-desc { margin-top: 6px; font-size: 14px; color: var(--muted); }
+
+    .dictionary { display: grid; gap: 12px; margin-top: 14px; }
+    .term {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+    .term strong { color: var(--violet-deep); }
+    .term p { margin: 0; }
+
+    .table-wrap { overflow-x: auto; margin-top: 14px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid var(--border); }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: left; }
+    th { color: var(--violet-deep); background: #f6f0ff; }
+    tr:last-child td { border-bottom: 0; }
+
+    .idea-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fff 0%, #fbf7ff 100%);
+    }
+    .idea-card p { margin: 0; color: var(--muted); }
+
+    .footer { margin-top: 10px; color: var(--muted); font-size: 14px; }
+    a { color: var(--violet-dark); }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel { position: static; }
+      .facts,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow { grid-template-columns: 1fr; }
+      .flow-item::after { display: none; }
+      .term { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; }
+      .hero,
+      .panel,
+      .card { box-shadow: none; border-color: #e4d8f8; }
+      .hero { background: var(--violet-dark); }
+      .panel { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .card { break-inside: avoid; page-break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+      .placeholder { min-height: 120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero" id="top">
+      <div class="eyebrow">Занятие 7 · ИИ-автоматизация</div>
+      <h1>Данные → автоматизация → ИИ → результат</h1>
+      <p>
+        Эта инструкция показывает, как мыслить автоматизацией: откуда приходят данные,
+        что запускает сценарий, как подключается ИИ и куда возвращается результат.
+        Демонстрационный пример: Яндекс Форма → Albato → GigaChat → Email.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#quick-start">Быстрый старт</a>
+        <a class="btn btn-secondary" href="#constructor">Конструктор решений</a>
+        <a class="btn btn-secondary" href="#demo">Пошаговый пример</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>Содержание</h2>
+        <nav class="nav">
+          <a href="#quick-start">Быстрый старт</a>
+          <a href="#constructor">1. Конструктор решений</a>
+          <a href="#dictionary">2. Словарь автоматизации</a>
+          <a href="#spectrum">3. Что можно менять</a>
+          <a href="#demo">4. Наш пример</a>
+          <a href="#step-1">5. Яндекс Форма</a>
+          <a href="#step-2">6. Webhook в Albato</a>
+          <a href="#step-3">7. Ловец хуков</a>
+          <a href="#step-4">8. GigaChat</a>
+          <a href="#step-5">9. Email</a>
+          <a href="#ideas">10. Идеи проектов</a>
+          <a href="#homework">11. Что должно быть в ДЗ</a>
+          <a href="#safety">12. Безопасность</a>
+        </nav>
+        <div class="panel-note">
+          В местах с пунктирной рамкой оставлены области для ваших скриншотов.
+          Ключи, пароли и токены на скриншотах нужно замазать.
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="card" id="quick-start">
+          <h2>Быстрый старт</h2>
+          <p class="muted">
+            Центральная идея занятия: ИИ можно использовать не только в чате, но и как часть процесса.
+            Данные где-то появляются, автоматизация передаёт их в модель, а результат возвращается пользователю или в рабочую систему.
+          </p>
+
+          <div class="flow">
+            <div class="flow-item">
+              <div class="flow-title">Данные</div>
+              <div class="flow-main">Форма, таблица, CSV, заявка</div>
+              <div class="flow-desc">Где появляются исходные данные.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">Автоматизация</div>
+              <div class="flow-main">Albato, n8n, Make, Python</div>
+              <div class="flow-desc">Что забирает данные и передаёт их дальше.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">ИИ</div>
+              <div class="flow-main">GigaChat или другая модель</div>
+              <div class="flow-desc">Что формирует summary, классификацию или комментарий.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">Результат</div>
+              <div class="flow-main">Email, таблица, чат, отчёт</div>
+              <div class="flow-desc">Куда попадает результат обработки.</div>
+            </div>
+          </div>
+
+          <div class="facts">
+            <div class="fact">
+              <span class="fact-label">Демонстрационный сценарий</span>
+              <div class="fact-value">Яндекс Форма → Albato → GigaChat → Email</div>
+            </div>
+            <div class="fact">
+              <span class="fact-label">Что изучаем</span>
+              <div class="fact-value">триггеры, действия, webhook, API, prompt, маппинг полей</div>
+            </div>
+            <div class="fact">
+              <span class="fact-label">Что важно в ДЗ</span>
+              <div class="fact-value">не конкретный сервис, а работающая логика процесса</div>
+            </div>
+            <div class="fact">
+              <span class="fact-label">Главное ограничение</span>
+              <div class="fact-value">ИИ-ответ нужно проверять, особенно если данных мало</div>
+            </div>
+          </div>
+
+          <div class="note danger">
+            Не передавайте в учебные автоматизации персональные, закрытые, финансовые, медицинские или чувствительные данные.
+            Для прототипа достаточно искусственных, обезличенных или открытых данных.
+          </div>
+        </section>
+
+        <section class="card" id="constructor">
+          <h2>1. Конструктор ИИ-автоматизации</h2>
+          <p class="muted">
+            Любую автоматизацию удобно проектировать как ответ на пять вопросов. Если студент может ответить на эти вопросы,
+            он уже понимает архитектуру своего прототипа.
+          </p>
+
+          <div class="grid-2">
+            <div class="idea-card">
+              <h4>1. Откуда берутся данные?</h4>
+              <p>Форма, таблица, CSV-файл, CRM, заявка, опрос, письмо, сообщение, выгрузка с сайта.</p>
+            </div>
+            <div class="idea-card">
+              <h4>2. Что запускает процесс?</h4>
+              <p>Отправка формы, появление новой строки, ручной запуск, новое письмо, новый файл, webhook.</p>
+            </div>
+            <div class="idea-card">
+              <h4>3. Кто передаёт данные дальше?</h4>
+              <p>Albato, Make, n8n, Google Apps Script, Python-скрипт, другой интегратор или собственный код.</p>
+            </div>
+            <div class="idea-card">
+              <h4>4. Какой ИИ обрабатывает данные?</h4>
+              <p>GigaChat, YandexGPT, Qwen, DeepSeek, локальная модель через Ollama или другой доступный API.</p>
+            </div>
+            <div class="idea-card">
+              <h4>5. Куда попадает результат?</h4>
+              <p>Email, новая строка в таблице, сообщение, карточка заявки, отчёт, PDF/HTML, комментарий в CRM.</p>
+            </div>
+            <div class="idea-card">
+              <h4>6. Как проверить результат?</h4>
+              <p>Проверить исходные данные, формулы, пропуски, числовые основания и ограничения ИИ-вывода.</p>
+            </div>
+          </div>
+
+          <div class="note ok">
+            На занятии подробно разбирается один готовый вариант. В домашней работе можно повторить его или собрать собственную цепочку по той же логике.
+          </div>
+        </section>
+
+        <section class="card" id="dictionary">
+          <h2>2. Словарь автоматизации</h2>
+          <p class="muted">
+            Эти понятия нужны, чтобы студенты понимали не только интерфейс Albato, но и общую механику интеграций.
+          </p>
+
+          <div class="dictionary">
+            <div class="term">
+              <strong>Источник данных</strong>
+              <p>Место, где появляется новая информация. Это может быть форма, таблица, CRM, файл, письмо или сообщение. В нашем примере источник — Яндекс Форма.</p>
+            </div>
+            <div class="term">
+              <strong>Триггер</strong>
+              <p>Событие, которое запускает сценарий. Например: пользователь отправил форму, в таблице появилась строка, пришло письмо. В нашем примере триггер — новая отправка Яндекс Формы.</p>
+            </div>
+            <div class="term">
+              <strong>Действие</strong>
+              <p>Операция, которая выполняется после триггера. Например: отправить данные в GigaChat, отправить письмо, записать строку в таблицу. В одной связке может быть несколько действий.</p>
+            </div>
+            <div class="term">
+              <strong>Связка / сценарий</strong>
+              <p>Цепочка из триггера и действий. Например: «форма отправлена → данные ушли в GigaChat → ответ отправлен на email».</p>
+            </div>
+            <div class="term">
+              <strong>Webhook</strong>
+              <p>Специальная ссылка, на которую один сервис отправляет данные другому сервису. В нашем примере Яндекс Форма отправляет ответы на webhook Albato.</p>
+            </div>
+            <div class="term">
+              <strong>API</strong>
+              <p>Способ, по которому сервисы общаются друг с другом. Один сервис отправляет запрос по правилам API, другой возвращает ответ. GigaChat API позволяет отправить prompt и получить ответ модели.</p>
+            </div>
+            <div class="term">
+              <strong>Ключ доступа / credential</strong>
+              <p>Данные, которые подтверждают право подключаться к сервису: API-ключ, Authorization Key, SMTP-пароль приложения. Их нельзя показывать в скриншотах и публиковать.</p>
+            </div>
+            <div class="term">
+              <strong>Маппинг полей</strong>
+              <p>Сопоставление: какое поле откуда взять и куда вставить. Например, поле <span class="mono">data</span> из формы попадает в prompt, а поле <span class="mono">email</span> — в получателя письма.</p>
+            </div>
+            <div class="term">
+              <strong>Prompt</strong>
+              <p>Инструкция для ИИ. В автоматизации prompt обычно собирается из постоянного текста и переменных из формы или таблицы.</p>
+            </div>
+            <div class="term">
+              <strong>SMTP</strong>
+              <p>Протокол отправки email. В нашей связке SMTP нужен, чтобы Albato мог отправить письмо через почтовый ящик Mail.ru.</p>
+            </div>
+            <div class="term">
+              <strong>Логи / история запусков</strong>
+              <p>Журнал, где видно, какие шаги прошли успешно, а где возникла ошибка. Это первое место, куда нужно смотреть при отладке.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="spectrum">
+          <h2>3. Что можно менять в этой схеме</h2>
+          <p class="muted">
+            Демонстрационная связка — только один пример. В домашней работе студент может заменить почти любой блок,
+            если сохраняется логика: данные → автоматизация → ИИ → результат.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Блок схемы</th>
+                  <th>В нашем примере</th>
+                  <th>Что можно использовать вместо этого</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Источник данных</strong></td>
+                  <td>Яндекс Форма</td>
+                  <td>таблица, CSV-файл, анкета, CRM, заявка, письмо, выгрузка с сайта, ручной ввод</td>
+                </tr>
+                <tr>
+                  <td><strong>Автоматизация</strong></td>
+                  <td>Albato</td>
+                  <td>Make, n8n, Google Apps Script, Python, другой интегратор или собственный код</td>
+                </tr>
+                <tr>
+                  <td><strong>ИИ</strong></td>
+                  <td>GigaChat</td>
+                  <td>YandexGPT, Qwen, DeepSeek, Z.ai, локальная модель через Ollama, другой API</td>
+                </tr>
+                <tr>
+                  <td><strong>Результат</strong></td>
+                  <td>Email</td>
+                  <td>таблица, чат, CRM, PDF/HTML-отчёт, уведомление, комментарий к заявке</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note">
+            Важно не количество сервисов, а понятная логика процесса. Маленький, но рабочий прототип лучше сложной схемы, которая не запускается.
+          </div>
+        </section>
+
+        <section class="card" id="demo">
+          <h2>4. Демонстрационный пример</h2>
+          <p class="muted">
+            Ниже описан пример, который можно показать на занятии: студент отправляет форму с таблицей и вопросом,
+            GigaChat готовит аналитический комментарий, а Albato отправляет результат на email.
+          </p>
+
+          <div class="flow">
+            <div class="flow-item">
+              <div class="flow-title">Источник</div>
+              <div class="flow-main">Яндекс Форма</div>
+              <div class="flow-desc">Поля: название, описание, CSV, вопрос, email.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">Автоматизация</div>
+              <div class="flow-main">Albato</div>
+              <div class="flow-desc">Ловит webhook и передаёт поля дальше.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">ИИ</div>
+              <div class="flow-main">GigaChat</div>
+              <div class="flow-desc">Получает prompt и возвращает HTML-ответ.</div>
+            </div>
+            <div class="flow-item">
+              <div class="flow-title">Результат</div>
+              <div class="flow-main">Email</div>
+              <div class="flow-desc">Письмо приходит на адрес из формы.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="step-1">
+          <div class="step-head">
+            <div class="badge">1</div>
+            <div>
+              <h2>Подготовьте Яндекс Форму</h2>
+              <p>Форма собирает данные, которые потом будут переданы в автоматизацию.</p>
+            </div>
+          </div>
+
+          <p>В форме удобно создать такие поля:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Поле в форме</th>
+                  <th>Переменная в Albato</th>
+                  <th>Зачем нужно</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Название набора данных</td>
+                  <td class="mono">dataname</td>
+                  <td>Чтобы в письме и prompt было понятно, о каких данных идёт речь.</td>
+                </tr>
+                <tr>
+                  <td>Краткое описание данных</td>
+                  <td class="mono">datainfo</td>
+                  <td>Контекст для модели: что означают строки и столбцы.</td>
+                </tr>
+                <tr>
+                  <td>Таблица или CSV</td>
+                  <td class="mono">data</td>
+                  <td>Основные данные, которые анализирует ИИ.</td>
+                </tr>
+                <tr>
+                  <td>Что нужно узнать по данным?</td>
+                  <td class="mono">task</td>
+                  <td>Вопрос пользователя к данным.</td>
+                </tr>
+                <tr>
+                  <td>Email для результата</td>
+                  <td class="mono">email</td>
+                  <td>Адрес, на который отправляется итоговое письмо.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note ok">
+            Для первого прототипа лучше передавать таблицу как текст или CSV. Так данные проще подставить в prompt GigaChat.
+          </div>
+
+          <div class="media placeholder">
+            <div>
+              <strong>Место для скриншота 1</strong>
+              <span>Яндекс Форма в режиме редактирования: видны поля dataname, datainfo, data, task, email.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="step-2">
+          <div class="step-head">
+            <div class="badge">2</div>
+            <div>
+              <h2>Передайте форму в Albato через webhook</h2>
+              <p>Webhook — это адрес, куда Яндекс Форма отправляет ответы после заполнения.</p>
+            </div>
+          </div>
+
+          <ol class="steps">
+            <li>В Albato откройте <strong>Подключения</strong> и добавьте подключение <strong>Яндекс.Формы</strong>.</li>
+            <li>Скопируйте webhook-ссылку, которую сгенерирует Albato.</li>
+            <li>В Яндекс Форме откройте раздел <strong>Интеграция</strong>.</li>
+            <li>Добавьте действие <strong>API / JSON-RPC.POST-запрос</strong>.</li>
+            <li>Вставьте webhook-ссылку в поле URL.</li>
+            <li>В блоке параметров создайте переменные <span class="mono">dataname</span>, <span class="mono">datainfo</span>, <span class="mono">data</span>, <span class="mono">task</span>, <span class="mono">email</span> и сопоставьте их с вопросами формы.</li>
+          </ol>
+
+          <div class="note warn">
+            Если вы добавили новое поле в форму, нужно заново отправить тестовый ответ, чтобы Albato увидел это поле.
+          </div>
+
+          <div class="grid-2">
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 2</strong>
+                <span>Albato: подключение Яндекс.Форм и webhook-ссылка.</span>
+              </div>
+            </div>
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 3</strong>
+                <span>Яндекс Форма: вкладка «Интеграция», JSON-RPC.POST и параметры формы.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="step-3">
+          <div class="step-head">
+            <div class="badge">3</div>
+            <div>
+              <h2>Проверьте «ловец хуков»</h2>
+              <p>На этом шаге Albato должен получить тестовые данные из формы.</p>
+            </div>
+          </div>
+
+          <ol class="steps">
+            <li>В Albato нажмите кнопку ожидания webhook или проверки входящих данных.</li>
+            <li>Откройте Яндекс Форму как пользователь и отправьте тестовый ответ.</li>
+            <li>Проверьте, что Albato показал поля <span class="mono">dataname</span>, <span class="mono">datainfo</span>, <span class="mono">data</span>, <span class="mono">task</span>, <span class="mono">email</span>.</li>
+          </ol>
+
+          <div class="note ok">
+            Если Albato показывает поля формы, связка «Яндекс Форма → Albato» уже работает. Дальше можно добавлять GigaChat.
+          </div>
+
+          <div class="media placeholder">
+            <div>
+              <strong>Место для скриншота 4</strong>
+              <span>Albato: окно «Ловец хуков», сообщение «Данные получены», список полей формы.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="step-4">
+          <div class="step-head">
+            <div class="badge">4</div>
+            <div>
+              <h2>Добавьте GigaChat как действие</h2>
+              <p>GigaChat получает подготовленный prompt и возвращает аналитический комментарий.</p>
+            </div>
+          </div>
+
+          <ol class="steps">
+            <li>В Albato откройте <strong>Подключения</strong> и добавьте <strong>GigaChat</strong>.</li>
+            <li>Вставьте <strong>Authorization Key</strong> и <strong>Scope</strong> из кабинета GigaChat API.</li>
+            <li>В связке после триггера Яндекс Формы добавьте действие GigaChat.</li>
+            <li>В prompt вставьте постоянный текст и переменные из формы: <span class="mono">dataname</span>, <span class="mono">datainfo</span>, <span class="mono">data</span>, <span class="mono">task</span>.</li>
+          </ol>
+
+          <div class="note danger">
+            Authorization Key, Scope, SMTP-пароль и другие ключи доступа нельзя показывать в отчёте, на скриншотах и в общих материалах.
+          </div>
+
+          <p>Пример логики prompt:</p>
+          <div class="code">Ты выступаешь как осторожный аналитик данных.
+
+Название набора данных:
+[dataname]
+
+Описание данных:
+[datainfo]
+
+Таблица или CSV:
+[data]
+
+Вопрос пользователя:
+[task]
+
+Сделай короткий аналитический комментарий.
+Не делай причинных выводов без проверки.
+Не придумывай столбцы, которых нет в данных.
+Если данных мало, прямо скажи об этом.</div>
+
+          <div class="note">
+            В квадратных скобках показаны не обычные слова, а переменные из предыдущего шага. В интерфейсе Albato их нужно выбирать через кнопку добавления переменной.
+          </div>
+
+          <div class="grid-2">
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 5</strong>
+                <span>Albato: подключение GigaChat. Ключи доступа замазать.</span>
+              </div>
+            </div>
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 6</strong>
+                <span>Albato: шаг GigaChat, prompt с переменными из Яндекс Формы.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="step-5">
+          <div class="step-head">
+            <div class="badge">5</div>
+            <div>
+              <h2>Отправьте результат на email</h2>
+              <p>Последнее действие фиксирует результат: отправляет письмо пользователю.</p>
+            </div>
+          </div>
+
+          <ol class="steps">
+            <li>После шага GigaChat добавьте действие <strong>Mail.ru / SMTP: отправить письмо</strong>.</li>
+            <li>В поле <strong>От</strong> укажите email отправителя.</li>
+            <li>В поле <strong>Кому</strong> подставьте переменную <span class="mono">email</span> из Яндекс Формы.</li>
+            <li>В тему письма добавьте название набора данных: <span class="mono">ИИ-анализ данных: [dataname]</span>.</li>
+            <li>В текст письма вставьте данные из формы и ответ GigaChat.</li>
+          </ol>
+
+          <p>Минимальный текст письма:</p>
+          <div class="code">Здравствуйте!
+
+Ниже результат автоматического анализа данных через GigaChat.
+
+Название набора данных:
+[dataname]
+
+Описание данных:
+[datainfo]
+
+Вопрос пользователя:
+[task]
+
+Ответ GigaChat:
+[Ответ модели #1 → Ответ]
+
+---
+Это учебный прототип:
+Яндекс Форма → Albato → GigaChat → Email.</div>
+
+          <div class="note ok">
+            После теста можно заменить обычный текст на HTML-шаблон письма. Для первого запуска важнее, чтобы цепочка стабильно работала.
+          </div>
+
+          <div class="grid-2">
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 7</strong>
+                <span>Albato: шаг Mail.ru / SMTP. Видны поля «От», «Кому», «Тема», «Текст письма».</span>
+              </div>
+            </div>
+            <div class="media placeholder">
+              <div>
+                <strong>Место для скриншота 8</strong>
+                <span>Полученное письмо с результатом GigaChat. Личные адреса можно замазать.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="testing">
+          <div class="step-head">
+            <div class="badge">6</div>
+            <div>
+              <h2>Проверьте запуск связки</h2>
+              <p>Рабочая автоматизация должна проходить все шаги без ручного копирования ответа.</p>
+            </div>
+          </div>
+
+          <ol class="steps">
+            <li>Отправьте новую Яндекс Форму.</li>
+            <li>Откройте историю запусков в Albato.</li>
+            <li>Проверьте, что шаг Яндекс Формы получил поля.</li>
+            <li>Проверьте, что GigaChat вернул ответ.</li>
+            <li>Проверьте, что письмо ушло и пришло получателю.</li>
+          </ol>
+
+          <div class="media placeholder">
+            <div>
+              <strong>Место для скриншота 9</strong>
+              <span>Albato: история успешного запуска связки. Видно, что все шаги выполнены.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="ideas">
+          <h2>10. Идеи для собственного прототипа</h2>
+          <p class="muted">
+            Эти примеры помогают студентам увидеть ширину задачи. Не нужно копировать наш сценарий буквально.
+          </p>
+
+          <div class="grid-2">
+            <div class="idea-card">
+              <h4>Образовательный сценарий</h4>
+              <p>Форма с вопросами студентов → ИИ группирует вопросы по темам → письмо преподавателю.</p>
+            </div>
+            <div class="idea-card">
+              <h4>Опросный сценарий</h4>
+              <p>Анкета обратной связи → ИИ выделяет частые проблемы → summary организатору.</p>
+            </div>
+            <div class="idea-card">
+              <h4>Аналитический сценарий</h4>
+              <p>CSV продаж или заявок → ИИ делает краткий аналитический комментарий → результат в письме или таблице.</p>
+            </div>
+            <div class="idea-card">
+              <h4>Организационный сценарий</h4>
+              <p>Форма регистрации на мероприятие → ИИ формирует сводку по участникам → письмо куратору.</p>
+            </div>
+            <div class="idea-card">
+              <h4>Классификация обращений</h4>
+              <p>Форма заявки → ИИ определяет категорию обращения и срочность → результат в таблицу или email.</p>
+            </div>
+            <div class="idea-card">
+              <h4>Продвинутый сценарий</h4>
+              <p>n8n или Python → API/локальная модель → отчёт. Подходит тем, кто хочет больше контроля и готов разбираться с настройкой.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="homework">
+          <h2>11. Что должно быть в домашней работе</h2>
+          <p class="muted">
+            Свобода реализации сохраняется, но структура отчёта должна быть единой. Это защищает работу от «самотёка».
+          </p>
+
+          <ol class="steps">
+            <li><strong>Схема автоматизации:</strong> источник данных → триггер → действия → ИИ → результат.</li>
+            <li><strong>Источник данных:</strong> скриншот формы, таблицы, CSV, заявки или другого источника.</li>
+            <li><strong>Инструмент автоматизации:</strong> Albato, n8n, Make, Python или другой вариант.</li>
+            <li><strong>Prompt:</strong> текст, который передаётся в ИИ, с пояснением переменных.</li>
+            <li><strong>Пример входных данных:</strong> небольшой фрагмент данных, который обрабатывается.</li>
+            <li><strong>Пример результата:</strong> письмо, таблица, сообщение, отчёт или другой результат.</li>
+            <li><strong>Скрин успешного запуска:</strong> история выполнения или другой признак, что цепочка реально сработала.</li>
+            <li><strong>Ограничения:</strong> что ИИ может понять неправильно и что нужно проверять вручную.</li>
+          </ol>
+
+          <div class="note ok">
+            Минимальный рекомендуемый путь: Яндекс Форма → Albato → GigaChat → Email. Но можно предложить свой путь, если он сохраняет общую логику.
+          </div>
+        </section>
+
+        <section class="card" id="safety">
+          <h2>12. Безопасность и типовые ошибки</h2>
+
+          <h3>Что нельзя делать</h3>
+          <ul class="list">
+            <li>Показывать в отчёте API-ключи, Authorization Key, SMTP-пароль, токены и webhook-ссылки.</li>
+            <li>Передавать персональные, закрытые или чувствительные данные в учебные интеграции.</li>
+            <li>Считать ИИ-ответ готовой истиной без проверки чисел и исходных данных.</li>
+          </ul>
+
+          <h3>Частые ошибки</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Проблема</th>
+                  <th>Что проверить</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Albato не видит новое поле формы</td>
+                  <td>Поле нужно добавить в параметры Яндекс Формы и заново отправить тестовый ответ.</td>
+                </tr>
+                <tr>
+                  <td>GigaChat отвечает слишком общо</td>
+                  <td>Уточнить prompt: попросить числа, ограничения, запретить причинные выводы без проверки.</td>
+                </tr>
+                <tr>
+                  <td>Письмо не приходит</td>
+                  <td>Проверить email из формы, папку «Спам», историю запуска Albato и SMTP-подключение.</td>
+                </tr>
+                <tr>
+                  <td>Ответ ИИ выглядит красиво, но сомнительно</td>
+                  <td>Проверить расчёты вручную: суммы, доли, пропуски, дубликаты, относительные показатели.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note danger">
+            Хорошая автоматизация не отменяет ответственность человека. Она ускоряет процесс, но не гарантирует корректность вывода.
+          </div>
+        </section>
+
+        
+      </main>
+    </div>
+  </div>
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+  parent.postMessage({ type: 'lesson07_guide', height }, '*');
+}
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
+</body>
+</html>
