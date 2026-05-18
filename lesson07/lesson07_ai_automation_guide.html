@@ -491,23 +491,39 @@
     }
 
     .lightbox-close {
-      position: fixed;
-      right: 24px;
-      top: 18px;
-      z-index: 10001;
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      z-index: 10002;
       width: 52px;
       height: 52px;
-      border: 1px solid rgba(255,255,255,.30);
+      border: 1px solid rgba(255,255,255,.36);
       border-radius: 999px;
-      background: rgba(255,255,255,.18);
+      background: rgba(42, 23, 74, .58);
       color: #fff;
       font-size: 34px;
       line-height: 1;
       cursor: pointer;
       pointer-events: auto;
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
     }
 
-    .lightbox-close:hover { background: rgba(255,255,255,.26); }
+    .lightbox-close:hover { background: rgba(42, 23, 74, .72); }
+
+    .lightbox.is-in-frame {
+      position: absolute;
+      inset: auto 0 auto 0;
+      min-height: 0;
+      height: 760px;
+    }
+
+    .lightbox.is-in-frame .lightbox-inner {
+      max-height: calc(100% - 48px);
+    }
+
+    .lightbox.is-in-frame img {
+      max-height: calc(100% - 58px);
+    }
 
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
@@ -594,7 +610,7 @@
             </div>
             <div class="flow-item">
               <div class="flow-title">Автоматизация</div>
-              <div class="flow-main">Albato, n8n, Make, Python</div>
+              <div class="flow-main">Albato, n8n, Make, другой интегратор</div>
               <div class="flow-desc">Что забирает данные и передаёт их дальше.</div>
             </div>
             <div class="flow-item">
@@ -637,8 +653,8 @@
         <section class="card" id="constructor">
           <h2>1. Конструктор ИИ-автоматизации</h2>
           <p class="muted">
-            Любую автоматизацию удобно проектировать как ответ на пять вопросов. Если студент может ответить на эти вопросы,
-            он уже понимает архитектуру своего прототипа.
+            Любую автоматизацию удобно проектировать как ответ на пять вопросов. Если на них есть ответы,
+            архитектура прототипа уже становится понятной.
           </p>
 
           <div class="grid-2">
@@ -652,7 +668,7 @@
             </div>
             <div class="idea-card">
               <h4>3. Кто передаёт данные дальше?</h4>
-              <p>Albato, Make, n8n, Google Apps Script, Python-скрипт, другой интегратор или собственный код.</p>
+              <p>Albato, Make, n8n, Google Apps Script, другой интегратор или собственный сценарий.</p>
             </div>
             <div class="idea-card">
               <h4>4. Какой ИИ обрабатывает данные?</h4>
@@ -676,7 +692,7 @@
         <section class="card" id="dictionary">
           <h2>2. Словарь автоматизации</h2>
           <p class="muted">
-            Эти понятия нужны, чтобы студенты понимали не только интерфейс Albato, но и общую механику интеграций.
+            Эти понятия помогают понимать не только интерфейс Albato, но и общую механику интеграций.
           </p>
 
           <div class="dictionary">
@@ -730,7 +746,7 @@
         <section class="card" id="spectrum">
           <h2>3. Что можно менять в этой схеме</h2>
           <p class="muted">
-            Демонстрационная связка — только один пример. В домашней работе студент может заменить почти любой блок,
+            Демонстрационная связка — только один пример. В домашней работе можно заменить почти любой блок,
             если сохраняется логика: данные → автоматизация → ИИ → результат.
           </p>
 
@@ -752,7 +768,7 @@
                 <tr>
                   <td><strong>Автоматизация</strong></td>
                   <td>Albato</td>
-                  <td>Make, n8n, Google Apps Script, Python, другой интегратор или собственный код</td>
+                  <td>Make, n8n, Google Apps Script, другой интегратор или собственный сценарий</td>
                 </tr>
                 <tr>
                   <td><strong>ИИ</strong></td>
@@ -776,7 +792,7 @@
         <section class="card" id="demo">
           <h2>4. Демонстрационный пример</h2>
           <p class="muted">
-            Ниже описан пример, который можно показать на занятии: студент отправляет форму с таблицей и вопросом,
+            Ниже описан рабочий пример: пользователь отправляет форму с таблицей и вопросом,
             GigaChat готовит аналитический комментарий, а Albato отправляет результат на email.
           </p>
 
@@ -804,7 +820,7 @@
           </div>
 
           <div class="note">
-            На этом экране удобно объяснять студентам базовую механику Albato: первый блок — триггер, второй и следующие блоки — действия.
+            Обратите внимание: первый блок связки — триггер, второй и следующие блоки — действия. Так визуально видна логика «когда запустить» и «что сделать дальше».
           </div>
 
           <figure class="media screenshot shot-wide">
@@ -870,7 +886,7 @@
           </div>
 
           <div class="callout-list">
-            <strong>Что проговорить по скриншоту:</strong> форма — это источник данных, а названия переменных в Albato лучше делать короткими и латиницей: <span class="mono">dataname</span>, <span class="mono">datainfo</span>, <span class="mono">data</span>, <span class="mono">task</span>, <span class="mono">email</span>.
+            <strong>Обратите внимание:</strong> форма — это источник данных, а названия переменных в Albato лучше делать короткими и латиницей: <span class="mono">dataname</span>, <span class="mono">datainfo</span>, <span class="mono">data</span>, <span class="mono">task</span>, <span class="mono">email</span>.
           </div>
 
           <figure class="media screenshot shot-wide">
@@ -995,7 +1011,7 @@
           </div>
 
           <div class="callout-list">
-            <strong>Что проговорить по скриншоту:</strong> prompt состоит из постоянной инструкции и переменных. Если переменные вставлены правильно, Albato показывает их как отдельные плашки.
+            <strong>Обратите внимание:</strong> prompt состоит из постоянной инструкции и переменных. Если переменные вставлены правильно, Albato показывает их как отдельные плашки.
           </div>
 
           <div class="grid-2">
@@ -1059,7 +1075,7 @@
           </div>
 
           <div class="callout-list">
-            <strong>Что проговорить по скриншоту:</strong> получатель письма — это не фиксированный адрес, а переменная <span class="mono">email</span> из формы. Поэтому каждый пользователь получает свой результат.
+            <strong>Обратите внимание:</strong> получатель письма — это не фиксированный адрес, а переменная <span class="mono">email</span> из формы. Поэтому каждый пользователь получает свой результат.
           </div>
 
           <div class="grid-2">
@@ -1109,13 +1125,13 @@
         <section class="card" id="ideas">
           <h2>11. Идеи для собственного прототипа</h2>
           <p class="muted">
-            Эти примеры помогают студентам увидеть ширину задачи. Не нужно копировать наш сценарий буквально.
+            Эти примеры показывают ширину задачи. Не нужно копировать демонстрационный сценарий буквально.
           </p>
 
           <div class="grid-2">
             <div class="idea-card">
               <h4>Образовательный сценарий</h4>
-              <p>Форма с вопросами студентов → ИИ группирует вопросы по темам → письмо преподавателю.</p>
+              <p>Форма с учебными вопросами → ИИ группирует вопросы по темам → письмо преподавателю.</p>
             </div>
             <div class="idea-card">
               <h4>Опросный сценарий</h4>
@@ -1134,8 +1150,8 @@
               <p>Форма заявки → ИИ определяет категорию обращения и срочность → результат в таблицу или email.</p>
             </div>
             <div class="idea-card">
-              <h4>Продвинутый сценарий</h4>
-              <p>n8n или Python → API/локальная модель → отчёт. Подходит тем, кто хочет больше контроля и готов разбираться с настройкой.</p>
+              <h4>Продвинутый сценарий или свой сюжет</h4>
+              <p>Можно придумать собственную цепочку: другой источник данных, несколько действий, необычный способ фиксации результата или отдельный шаг проверки. Главное — чтобы схема была понятной и запускалась.</p>
             </div>
           </div>
         </section>
@@ -1149,7 +1165,7 @@
           <ol class="steps">
             <li><strong>Схема автоматизации:</strong> источник данных → триггер → действия → ИИ → результат.</li>
             <li><strong>Источник данных:</strong> скриншот формы, таблицы, CSV, заявки или другого источника.</li>
-            <li><strong>Инструмент автоматизации:</strong> Albato, n8n, Make, Python или другой вариант.</li>
+            <li><strong>Инструмент автоматизации:</strong> Albato, n8n, Make или другой вариант.</li>
             <li><strong>Prompt:</strong> текст, который передаётся в ИИ, с пояснением переменных.</li>
             <li><strong>Пример входных данных:</strong> небольшой фрагмент данных, который обрабатывается.</li>
             <li><strong>Пример результата:</strong> письмо, таблица, сообщение, отчёт или другой результат.</li>
@@ -1215,8 +1231,8 @@
   </div>
 
   <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Закрыть увеличенное изображение" onclick="window.lesson07CloseLightbox && window.lesson07CloseLightbox(event)">×</button>
     <div class="lightbox-inner" role="dialog" aria-modal="true" aria-label="Увеличенный скриншот">
+      <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Закрыть увеличенное изображение" onclick="window.lesson07CloseLightbox && window.lesson07CloseLightbox(event)">×</button>
       <img id="lightboxImage" src="" alt="">
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
@@ -1229,13 +1245,44 @@
       const caption = document.getElementById('lightboxCaption');
       const closeButton = document.getElementById('lightboxClose');
 
-      function openLightbox(src, text) {
+      function isEmbeddedFrame() {
+        try {
+          return window.self !== window.top;
+        } catch (error) {
+          return true;
+        }
+      }
+
+      function placeLightbox(opener) {
+        if (!isEmbeddedFrame()) {
+          lightbox.classList.remove('is-in-frame');
+          lightbox.style.top = '';
+          lightbox.style.height = '';
+          document.body.style.overflow = 'hidden';
+          return;
+        }
+
+        lightbox.classList.add('is-in-frame');
+        document.body.style.overflow = '';
+
+        const rect = opener ? opener.getBoundingClientRect() : { top: 0 };
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const pageHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, 760);
+        const modalHeight = 760;
+        const desiredTop = scrollTop + rect.top - 80;
+        const safeTop = Math.min(Math.max(0, desiredTop), Math.max(0, pageHeight - modalHeight - 24));
+
+        lightbox.style.top = safeTop + 'px';
+        lightbox.style.height = modalHeight + 'px';
+      }
+
+      function openLightbox(src, text, opener) {
         image.src = src;
         image.alt = text || 'Увеличенный скриншот';
         caption.textContent = text || '';
+        placeLightbox(opener);
         lightbox.classList.add('is-open');
         lightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
       }
 
       function closeLightbox(event) {
@@ -1244,7 +1291,10 @@
           event.stopPropagation();
         }
         lightbox.classList.remove('is-open');
+        lightbox.classList.remove('is-in-frame');
         lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.style.top = '';
+        lightbox.style.height = '';
         image.src = '';
         document.body.style.overflow = '';
       }
@@ -1254,7 +1304,7 @@
       document.querySelectorAll('.shot-button').forEach(function (button) {
         button.addEventListener('click', function (event) {
           event.preventDefault();
-          openLightbox(button.getAttribute('data-full'), button.getAttribute('data-caption'));
+          openLightbox(button.getAttribute('data-full'), button.getAttribute('data-caption'), button);
         });
       });
 
